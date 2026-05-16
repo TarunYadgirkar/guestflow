@@ -18,48 +18,57 @@ const TYPE_ICONS: Record<ItineraryItem['type'], React.ReactElement> = {
 
 export default function ItineraryPanel({ itinerary, className, style }: Props) {
   const [lang, setLang] = useState<'native' | 'english'>('english');
+  const [expandAll, setExpandAll] = useState(false);
 
   return (
     <div
       className={`${className ?? ''}`}
       style={{ borderTop: '3px solid var(--accent)', paddingTop: '16px', ...style }}
     >
-      {/* Header with Language Toggle */}
-      <div className="flex items-center justify-between mb-6">
+      {/* Header with Language Toggle + Expand All */}
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>
           Itinerary
         </h2>
-
-        {itinerary.dualLanguage && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setLang('english')}
-              className="text-sm px-3 py-1"
-              style={{
-                backgroundColor: lang === 'english' ? 'var(--accent)' : 'transparent',
-                color: lang === 'english' ? 'white' : 'var(--accent)',
-                border: '1px solid var(--accent)',
-                fontWeight: lang === 'english' ? 'bold' : 'normal',
-                cursor: 'pointer',
-              }}
-            >
-              English
-            </button>
-            <button
-              onClick={() => setLang('native')}
-              className="text-sm px-3 py-1"
-              style={{
-                backgroundColor: lang === 'native' ? 'var(--accent)' : 'transparent',
-                color: lang === 'native' ? 'white' : 'var(--accent)',
-                border: '1px solid var(--accent)',
-                fontWeight: lang === 'native' ? 'bold' : 'normal',
-                cursor: 'pointer',
-              }}
-            >
-              {itinerary.nativeLanguage}
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {itinerary.dualLanguage && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setLang('english')}
+                className="text-xs px-2 py-1"
+                style={{
+                  backgroundColor: lang === 'english' ? 'var(--accent)' : 'transparent',
+                  color: lang === 'english' ? 'white' : 'var(--accent)',
+                  border: '1px solid var(--accent)',
+                  fontWeight: lang === 'english' ? 'bold' : 'normal',
+                  cursor: 'pointer',
+                }}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang('native')}
+                className="text-xs px-2 py-1"
+                style={{
+                  backgroundColor: lang === 'native' ? 'var(--accent)' : 'transparent',
+                  color: lang === 'native' ? 'white' : 'var(--accent)',
+                  border: '1px solid var(--accent)',
+                  fontWeight: lang === 'native' ? 'bold' : 'normal',
+                  cursor: 'pointer',
+                }}
+              >
+                {itinerary.nativeLanguage}
+              </button>
+            </div>
+          )}
+          <button
+            onClick={() => setExpandAll(e => !e)}
+            className="text-xs font-semibold"
+            style={{ color: 'var(--accent)' }}
+          >
+            {expandAll ? 'Collapse all' : 'Expand all'}
+          </button>
+        </div>
       </div>
 
       {/* Items */}
@@ -76,7 +85,7 @@ export default function ItineraryPanel({ itinerary, className, style }: Props) {
               </span>
               <div className="flex-1 min-w-0">
                 <p className="text-lg font-bold leading-snug">{title}</p>
-                <Collapsible title="Details & Data Source" defaultOpen={false}>
+                <Collapsible title="Details & Data Source" defaultOpen={false} forceOpen={expandAll}>
                   <p style={{ fontSize: '0.9rem', marginBottom: '8px' }}>{description}</p>
                   <p style={{ fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '4px' }}>
                     Data source:

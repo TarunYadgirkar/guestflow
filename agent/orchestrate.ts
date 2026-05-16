@@ -23,6 +23,9 @@ function load<T>(filename: string): T {
 }
 
 // ─── MOCK FLIGHT ─────────────────────────────────────────────────────────────
+// TODO: replace with live flight API — set FLIGHT_API_KEY in .env and call e.g. FlightAware AeroAPI
+// GET https://aeroapi.flightaware.com/aeroapi/flights/{ident}/position
+// The delayMinutes param below is a temporary demo stand-in for a real delay reaction.
 
 function getMockFlight(flightNumber: string | null, delayMinutes = 0): FlightStatus {
   const scheduled = new Date("2026-05-17T22:45:00-07:00");
@@ -241,6 +244,7 @@ ${SCHEMA}
    If flight was delayed: "Checking flight status" step → status "pivoted".
    All others → status "complete".
 10. hostAssignment and flightStatus are pre-computed — copy them VERBATIM from the values below.
+11. ADAPTER: if guest.originProfile.plugType is set, add "<plugType> adapter pre-placed at desk" to roomSpec.environmentNotes. Do NOT mention the adapter in hostBrief.serviceNotes.
 
 ## COMPUTED INPUTS
 climateDelta: ${climateDelta}°F
@@ -507,14 +511,12 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
         "He reads menus carefully — always confirm vegetarian notes verbally, not assumed.",
         "Very private traveler. No turndown intrusion unless explicitly requested.",
         "He brings a personal meditation cushion; the high shelf is cleared for it — mention this casually.",
-        "Type D adapter is pre-staged at the desk. Point it out on arrival so he knows it's there.",
         "If he mentions needing space for morning practice, offer the garden terrace yoga session (6:30 AM, on-property).",
       ],
       doNotMention: [
         "Do not reference the anniversary. We see May 18 marked in his linked calendar ('Our Day — 9 years with Priya'). If he chooses to celebrate, he will say so. The private terrace dinner is arranged for Sunday evening — say nothing unless he raises it.",
         "Do not reference his faith or Sikh practice. We inferred it from past stay notes (turban stand request, London) and his public community affiliation. A prayer mat is in back-office standby — only surface it if he indicates interest in a practice space.",
         "Do not say 'We saw your flight was delayed' or reference flight tracking. Simply acknowledge his journey was long and that the room is ready.",
-        "Do not proactively mention the loaner windbreaker. If he comments on the cold, say 'We thought of that' and present it.",
       ],
       flightStatus: flight,
       backOfficeStandbyInstructions: [
@@ -539,7 +541,7 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
         label: "Checking flight status",
         status: flightPivoted ? "pivoted" : "complete",
         detail: flightPivoted
-          ? `UA328 delayed ${flight.delayMinutes} min. Arrival now ${adjTime} PT. Late arrival + 12.5hr timezone delta detected. PIVOT: Champagne → Recovery Protocol (bone broth, chamomile, electrolytes). Circadian Handshake locked at 2700K / 65°F.`
+          ? `UA328 delayed ${flight.delayMinutes} min. Arrival now ${adjTime} PT. Late arrival + 12.5hr timezone delta detected. PIVOT: Champagne → Recovery Protocol (vegetable broth, chamomile, electrolytes). Circadian Handshake locked at 2700K / 65°F.`
           : `UA328 on time. Arrival ${adjTime} PT. Late arrival detected (>9 PM). Dynamic Empathy and Circadian Handshake activated as standard.`,
       },
       {

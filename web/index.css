@@ -10,6 +10,9 @@
   --text-muted: #666666;              /* dark gray muted */
   --accent:     #0B5E40;              /* Discovery Green */
   --border:     #DDDDDD;              /* light gray border */
+  --danger:        #991B1B;              /* deep red — internal flags header */
+  --danger-border: #FCA5A5;              /* soft red border */
+  --danger-bg:     #FEF2F2;              /* light red background */
 
   /* Typography tokens */
   --font-display: 'Cormorant Garamond', Georgia, serif;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { HostAssignment } from '../../../shared/types';
 import staffData from '../../../data/staff.json';
 import Collapsible from '../Collapsible';
@@ -29,6 +29,7 @@ const FACTOR_ICONS: Record<string, React.ReactElement> = {
 };
 
 export default function HostAssignmentPanel({ assignment, guestId, className, style }: Props) {
+  const [expandAll, setExpandAll] = useState(false);
   const staff = (staffData as unknown as StaffRecord[]).find(s => s.id === assignment.assignedStaffId);
 
   return (
@@ -37,7 +38,16 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
       style={{ borderTop: '3px solid var(--accent)', paddingTop: '16px', ...style }}
     >
       {/* Header */}
-      <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text)' }}>Host Assignment</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Host Assignment</h2>
+        <button
+          onClick={() => setExpandAll(e => !e)}
+          className="text-xs font-semibold"
+          style={{ color: 'var(--accent)' }}
+        >
+          {expandAll ? 'Collapse all' : 'Expand all'}
+        </button>
+      </div>
 
       {/* Assigned Host */}
       {staff && (
@@ -60,7 +70,7 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
                 <Check size={13} weight="bold" /> Returning guest match
               </p>
             )}
-            <Collapsible title="Why this assignment" defaultOpen={false}>
+            <Collapsible title="Why this assignment" defaultOpen={false} forceOpen={expandAll}>
               <p className="text-sm mb-2">
                 <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Data sources:</span>
               </p>
@@ -92,7 +102,7 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
                   </span>
                 ))}
               </div>
-              <Collapsible title="Data source" defaultOpen={false}>
+              <Collapsible title="Data source" defaultOpen={false} forceOpen={expandAll}>
                 <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                   <Check size={11} weight="bold" style={{ color: 'var(--accent)', display: 'inline', marginRight: 4 }} />
                   Verified language proficiency from staff training records and guest communication history
@@ -104,13 +114,15 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
           {/* Specialties */}
           {staff.specialties.length > 0 && (
             <div>
-              <p className="font-bold text-sm mb-2">Specialties</p>
-              <ul className="space-y-1 text-sm">
+              <p className="font-bold text-sm mb-1">Specialties</p>
+              <ul className="space-y-0.5 text-sm pl-2">
                 {staff.specialties.slice(0, 3).map(sp => (
-                  <li key={sp}>• {sp}</li>
+                  <li key={sp} className="flex items-center gap-1.5">
+                    <span style={{ color: 'var(--accent)', fontSize: '0.65em' }}>◆</span>{sp}
+                  </li>
                 ))}
               </ul>
-              <Collapsible title="Why these specialties matter" defaultOpen={false}>
+              <Collapsible title="Why these specialties matter" defaultOpen={false} forceOpen={expandAll}>
                 <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                   Specialties aligned with guest preferences from profile and past interactions. This staff member's skills directly match the guest's likely needs.
                 </p>
@@ -129,7 +141,7 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
                       {FACTOR_ICONS[reason.factor] ?? <Circle size={14} />}
                       {reason.factor.charAt(0).toUpperCase() + reason.factor.slice(1)}
                     </strong>
-                    <Collapsible title={`${reason.detail.substring(0, 40)}...`} defaultOpen={false}>
+                    <Collapsible title={`${reason.detail.substring(0, 40)}...`} defaultOpen={false} forceOpen={expandAll}>
                       <p className="text-xs mb-1">
                         <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Inference:</span>
                       </p>

@@ -9,7 +9,6 @@ import {
   Buildings,
   WarningCircle,
   Airplane,
-  Microphone,
   Check,
   X,
   Package,
@@ -32,34 +31,9 @@ const DATA_SOURCES: Record<string, { icon: React.ReactElement; label: string; co
 };
 
 export default function HostBriefPanel({ hostBrief, className, style }: Props) {
-  const [voicePlaying, setVoicePlaying] = useState(false);
-  const staff = (staffData as unknown as StaffRecord[]).find(s => s.id === hostBrief.forStaffId);
-
+  const [expandAll, setExpandAll] = useState(false);
   const flight = hostBrief.flightStatus;
   const isDelayed = flight.status === 'delayed';
-
-  function handleVoiceBrief() {
-    if (voicePlaying) {
-      window.speechSynthesis.cancel();
-      setVoicePlaying(false);
-      return;
-    }
-
-    const text = `${hostBrief.greeting} Key facts: ${hostBrief.keyFacts.join('. ')}. Service notes: ${hostBrief.serviceNotes.join('. ')}.`;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English'));
-    if (preferred) utterance.voice = preferred;
-
-    utterance.onend = () => setVoicePlaying(false);
-    utterance.onerror = () => setVoicePlaying(false);
-
-    setVoicePlaying(true);
-    window.speechSynthesis.speak(utterance);
-  }
 
   return (
     <div
@@ -67,7 +41,16 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
       style={{ borderTop: '3px solid var(--accent)', paddingTop: '16px', ...style }}
     >
       {/* Header */}
-      <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text)' }}>Host Brief</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Host Brief</h2>
+        <button
+          onClick={() => setExpandAll(e => !e)}
+          className="text-xs font-semibold"
+          style={{ color: 'var(--accent)' }}
+        >
+          {expandAll ? 'Collapse all' : 'Expand all'}
+        </button>
+      </div>
 
       <div className="space-y-4">
         {/* Greeting */}
@@ -91,19 +74,19 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
         {/* Key Facts */}
         {hostBrief.keyFacts.length > 0 && (
           <div>
-            <p className="font-bold text-sm mb-2">Key Facts to Share</p>
-            <ul className="space-y-2">
+            <p className="font-bold text-sm mb-1">Key Facts to Share</p>
+            <ul className="space-y-1 pl-1">
               {hostBrief.keyFacts.map((fact, i) => {
                 const source = fact.includes('past stay') || fact.includes('hosted') ? 'past' :
                                fact.includes('Elite') || fact.includes('advisor') ? 'advisor' :
                                fact.includes('Rosewood') ? 'reservation' : 'form';
                 const src = DATA_SOURCES[source] || DATA_SOURCES.form!;
                 return (
-                  <li key={i} className="flex gap-2 items-start text-sm">
-                    <span className="font-bold" style={{ color: 'var(--accent)' }}>•</span>
+                  <li key={i} className="flex gap-1.5 items-start text-sm">
+                    <span style={{ color: 'var(--accent)', fontSize: '0.65em', marginTop: '5px', flexShrink: 0 }}>◆</span>
                     <div className="flex-1">
                       <p>{fact}</p>
-                      <Collapsible title="Data source" defaultOpen={false}>
+                      <Collapsible title="Data source" defaultOpen={false} forceOpen={expandAll}>
                         <p className="flex items-center gap-1" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                           <span style={{ color: 'var(--accent)' }}>{src.icon}</span>
                           {src.label} — verified from guest profile or reservation notes
@@ -119,10 +102,13 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
 
         {/* Service Notes */}
         {hostBrief.serviceNotes.length > 0 && (
-          <Collapsible title="Service Notes">
-            <ul className="space-y-1 text-sm">
+          <Collapsible title="Service Notes" forceOpen={expandAll}>
+            <ul className="space-y-0.5 text-sm pl-3">
               {hostBrief.serviceNotes.map((note, i) => (
-                <li key={i}>• {note}</li>
+                <li key={i} className="flex items-start gap-1.5">
+                  <span style={{ color: 'var(--accent)', fontSize: '0.65em', marginTop: '5px', flexShrink: 0 }}>◆</span>
+                  <span>{note}</span>
+                </li>
               ))}
             </ul>
           </Collapsible>
@@ -130,13 +116,16 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
 
         {/* Back-Office Items */}
         {hostBrief.backOfficeStandbyInstructions.length > 0 && (
-          <Collapsible title="Back-Office Items">
-            <p className="flex items-center gap-1 text-xs font-medium mb-2" style={{ color: '#713F12' }}>
+          <Collapsible title="Back-Office Items" forceOpen={expandAll}>
+            <p className="flex items-center gap-1 text-xs font-medium mb-1.5" style={{ color: '#713F12' }}>
               <Package size={12} /> If guest requests — fetch from back-office
             </p>
-            <ul className="space-y-1 text-sm">
+            <ul className="space-y-0.5 text-sm pl-3">
               {hostBrief.backOfficeStandbyInstructions.map((instr, i) => (
-                <li key={i}>→ {instr}</li>
+                <li key={i} className="flex items-start gap-1.5">
+                  <span style={{ color: 'var(--accent)', fontSize: '0.65em', marginTop: '5px', flexShrink: 0 }}>▸</span>
+                  <span>{instr}</span>
+                </li>
               ))}
             </ul>
           </Collapsible>
@@ -165,24 +154,6 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
             </div>
           </div>
         )}
-
-        {/* Audio Brief Button */}
-        <button
-          onClick={handleVoiceBrief}
-          className="btn-primary w-full text-sm py-2 inline-flex items-center justify-center gap-2"
-        >
-          {voicePlaying ? (
-            <>
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              Stop Audio
-            </>
-          ) : (
-            <>
-              <Microphone size={16} />
-              Play Audio Brief
-            </>
-          )}
-        </button>
       </div>
     </div>
   );

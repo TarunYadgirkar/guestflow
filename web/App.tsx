@@ -17,7 +17,7 @@ const TRACE_STEP_INTERVAL_MS = 750;
 export default function App() {
   const [selectedPropertyId, setSelectedPropertyId] = useState('rsw-sandhill');
   const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
-  const [delayMinutes, setDelayMinutes] = useState(0);
+  const [delayMinutes, setDelayMinutes] = useState(240);
   const [phase, setPhase] = useState<Phase>('idle');
   const [result, setResult] = useState<OrchestrationResult | null>(null);
   const [liveTrace, setLiveTrace] = useState<TraceStep[]>([]);
@@ -129,18 +129,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FFFFFF' }}>
-      {/* Header */}
-      <header style={{ borderBottom: '2px solid var(--accent)', backgroundColor: '#FFFFFF' }} className="sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <RosewoodLogo size="small" />
-            <div className="w-72">
-              <PropertySelector
-                selectedPropertyId={selectedPropertyId}
-                onSelect={handlePropertyChange}
-                disabled={phase === 'tracing'}
-              />
-            </div>
+      {/* Logo — fixed top-left corner */}
+      <div className="fixed top-0 left-0 z-50 px-4 py-3" style={{ backgroundColor: '#FFFFFF', borderBottom: '2px solid var(--accent)', borderRight: '1px solid var(--border)' }}>
+        <RosewoodLogo size="small" />
+      </div>
+
+      {/* Header — property selector, offset to clear the logo */}
+      <header style={{ borderBottom: '2px solid var(--accent)', backgroundColor: '#FFFFFF', paddingLeft: '180px' }} className="sticky top-0 z-40">
+        <div className="px-8 py-4 flex items-center justify-end">
+          <div className="w-72">
+            <PropertySelector
+              selectedPropertyId={selectedPropertyId}
+              onSelect={handlePropertyChange}
+              disabled={phase === 'tracing'}
+            />
           </div>
         </div>
       </header>
@@ -182,7 +184,7 @@ export default function App() {
                   onChange={(e) => setDelayMinutes(e.target.checked ? 240 : 0)}
                   disabled={phase === 'tracing'}
                 />
-                <span style={{ color: 'var(--text-muted)' }}>Delayed arrival</span>
+                <span style={{ color: 'var(--text-muted)' }}>4-hr delay (demo — replace with live flight API)</span>
               </label>
             </div>
           </div>
