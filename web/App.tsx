@@ -6,6 +6,7 @@ import RoomSpecPanel from './components/panels/RoomSpecPanel';
 import ItineraryPanel from './components/panels/ItineraryPanel';
 import HostAssignmentPanel from './components/panels/HostAssignmentPanel';
 import HostBriefPanel from './components/panels/HostBriefPanel';
+import RosewoodLogo from './components/RosewoodLogo';
 
 type Phase = 'idle' | 'tracing' | 'done' | 'error';
 
@@ -119,18 +120,20 @@ export default function App() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       {/* Header */}
       <header className="border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
-        <div className="max-w-7xl mx-auto px-8 py-6 flex items-end justify-between">
+        <div className="max-w-7xl mx-auto px-8 py-8 flex items-center justify-between">
+          {/* Logo on left */}
           <div>
-            <h1 className="font-sans text-4xl font-light tracking-wide" style={{ color: 'var(--discovery-green)' }}>
-              Rosewood
-            </h1>
-            <p className="text-xs tracking-[0.2em] uppercase mt-1" style={{ color: 'var(--text-muted)' }}>
+            <RosewoodLogo size="small" />
+          </div>
+
+          {/* Property info on right */}
+          <div className="text-right">
+            <p className="font-light text-sm" style={{ color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>
+              Rosewood Sand Hill
+            </p>
+            <p className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
               Operations Dashboard
             </p>
-          </div>
-          <div className="text-right">
-            <p className="font-sans text-lg font-light" style={{ color: 'var(--text-secondary)' }}>Rosewood Sand Hill</p>
-            <p className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Menlo Park, California</p>
           </div>
         </div>
       </header>
