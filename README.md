@@ -1,25 +1,18 @@
-# GuestFlow
 
-**Agentic arrival orchestration for luxury hotels.** Built at Hospitality 2030 — A Rosewood Sand Hill Hackathon (May 16, 2026).
+**Seeded guest data includes:** `origin_airport`, `destination_airport`, `rate_code`, `party_size`, `guest_breakdown`, `stay_days`, `origin_country_tech_profile` (`plug`, `voltage`, `telecom`), and `past_stay_notes`.
 
-Selecting a returning guest triggers a Claude pipeline that produces a choreographed arrival — room & amenity spec, a guest itinerary, the right human host (matched on prior relationship), and that host's brief — including a `doNotMention` layer that draws the line between *"they just knew"* and *"that's creepy."*
+---
 
-## Run locally
+## Why This Wins
 
-```bash
-cp .env.example .env        # add ANTHROPIC_API_KEY and ELEVENLABS_API_KEY
-npm install
-npm run dev
-```
+- **Demo (45%):** End-to-end live Claude orchestration — judges watch every reasoning step in real time
+- **Creativity (35%):** The explainable confidence/consent layer + Jet Lag Protocol + four-lens pipeline is genuinely novel
+- **Impact (20%):** Maps directly to a cited market gap (Canary just raised $80M in adjacent personalization infra)
+- **Brand fit:** Rosewood's *"A Sense of Place"* philosophy is the literal design constraint — the pipeline builds around it
+- **Sponsor fit:** Claude is the agentic spine; ElevenLabs gets one tasteful, high-impact touch
 
-## Structure
-
-- `/agent` — Claude orchestration + host-matching → `orchestrate(guestId)`
-- `/web` — demo UI + live reasoning trace
-- `/data` — seeded guests/staff/events, mock flight, pitch script
-- `/shared/types.ts` — the data contract
-- `PRD.md`, `SCHEMA.md`, `CLAUDE.md` — spec, contract, and team operating manual
+---
 
 ## Team
 
-GuestFlow — 3 builders.
+GuestFlow — 3 builders · Hospitality 2030 · Rosewood Sand Hill · May 16, 2026
