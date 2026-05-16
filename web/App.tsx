@@ -65,7 +65,10 @@ export default function App() {
 
     fetch(`/api/orchestrate?guestId=${selectedGuestId}&delay=${delayMinutes}`)
       .then(async r => {
-        if (!r.ok) throw new Error(`API error ${r.status}`);
+        if (!r.ok) {
+          const body = await r.text().catch(() => '');
+          throw new Error(`API ${r.status}: ${body.slice(0, 200)}`);
+        }
         return r.json();
       })
       .then((data: OrchestrationResult) => {

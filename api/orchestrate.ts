@@ -17,6 +17,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const result = await orchestrate(guestId, delay);
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json({ error: String(err) });
+    const msg = err instanceof Error ? err.stack ?? err.message : String(err);
+    console.error('[api/orchestrate] crash:', msg);
+    res.status(500).json({ error: msg });
   }
 }
