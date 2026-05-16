@@ -19,8 +19,8 @@ interface GuestCard {
 const GUESTS_DATA: Record<string, Record<string, unknown>> = {
   'g_tarun': {
     title: 'Mr.',
-    firstName: 'Tarun',
-    lastName: 'Singh',
+    firstName: 'Vikram',
+    lastName: 'Sharma',
     loyaltyTier: 'Rosewood Elite',
     preferredLanguage: 'Hindi',
     languages: ['Hindi', 'English'],
@@ -75,7 +75,7 @@ const GUESTS: GuestCard[] = [
   {
     id: 'g_tarun',
     title: 'Mr.',
-    name: 'Tarun Singh',
+    name: 'Vikram Sharma',
     tier: 'Rosewood Elite',
     tripPurpose: 'Anniversary – 9 yrs',
     languages: 'Hindi & English',

@@ -327,7 +327,7 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
         items: ["premium loaner windbreaker (navy)", "compact umbrella"],
         climateDeltaF: 33,
         rationale:
-          "Mr. Singh departs Mumbai at 95°F and arrives Menlo Park at ~62°F — a 33°F drop. Windbreaker pre-staged in suite closet.",
+          "Mr. Sharma departs Mumbai at 95°F and arrives Menlo Park at ~62°F — a 33°F drop. Windbreaker pre-staged in suite closet.",
         status: "auto",
       },
       dynamicEmpathyAmenity: {
@@ -364,7 +364,7 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
           description:
             "Private guided yoga and meditation on Rosewood's garden terrace at first light. Mats, cushions, and herbal tea provided. Quiet, on-property, no commute required.",
           whyThisGuest:
-            "Mr. Singh brings his own meditation cushion on every stay and requests 6 AM yoga setup daily. This starts his anniversary morning calm and grounded.",
+            "Mr. Sharma brings his own meditation cushion on every stay and requests 6 AM yoga setup daily. This starts his anniversary morning calm and grounded.",
           confidence: 0.97,
           status: "auto",
           localizedContent: {
@@ -434,12 +434,12 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
         {
           factor: "continuity",
           detail:
-            "Personally hosted Mr. Singh at Rosewood London (Nov 2024) and Rosewood Bangkok (Mar 2025). Mr. Singh cited Maria by name in his Bangkok review.",
+            "Personally hosted Mr. Sharma at Rosewood London (Nov 2024) and Rosewood Bangkok (Mar 2025). Mr. Sharma cited Maria by name in his Bangkok review.",
           weight: 10,
         },
         {
           factor: "language",
-          detail: "Fluent Hindi — can greet and brief in Mr. Singh's native language",
+          detail: "Fluent Hindi — can greet and brief in Mr. Sharma's native language",
           weight: 5,
         },
         {
@@ -459,7 +459,7 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
     hostBrief: {
       forStaffId: "s_maria",
       greeting:
-        "Maria — Mr. Singh is back, and he asked for you. Meet him at the entrance, greet in Hindi, keep it warm and brief. He will be exhausted from a long flight and a big timezone crossing.",
+        "Maria — Mr. Sharma is back, and he asked for you. Meet him at the entrance, greet in Hindi, keep it warm and brief. He will be exhausted from a long flight and a big timezone crossing.",
       keyFacts: [
         `Arriving ${adjTime} PT on UA328 from Mumbai via connection — 12.5-hour timezone crossing.${flightPivoted ? ` Flight delayed ${flight.delayMinutes} min; amenity and room protocol already adjusted.` : ""}`,
         "Strict vegetarian, absolutely no alcohol. Minibar and welcome amenity already swapped to recovery protocol — do not offer champagne.",
@@ -482,7 +482,7 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
       ],
       flightStatus: flight,
       backOfficeStandbyInstructions: [
-        "If Mr. Singh mentions prayer, meditation, or a practice space: say 'We have something set aside — I can have it in your room in just a moment.' Retrieve the prayer mat from back-office. Do not pre-announce it or name it.",
+        "If Mr. Sharma mentions prayer, meditation, or a practice space: say 'We have something set aside — I can have it in your room in just a moment.' Retrieve the prayer mat from back-office. Do not pre-announce it or name it.",
         "If he asks about nearby places of worship: 'The Gurdwara Sahib of San Jose is about 14 minutes by car — I'm happy to arrange a car at any time.'",
       ],
     },

@@ -26,7 +26,7 @@
 > "It doesn't hand this to a screen. It assigns Maria — who hosted him in London last year and speaks fluent Hindi — and gives her a brief. It even generates his itinerary in side-by-side Hindi and English via our Language Lens, ensuring he feels known, not just processed."
 
 **[1:05–1:30] The kicker — the creepy line & standby logic. Slow down here.**
-> "Here's the part that matters for luxury." *(open the doNotMention panel)* "The system inferred Mr. Singh is Sikh from past notes. It does **not** place a prayer mat in the room — that would be presumptuous. Instead, it places it in **Back-Office Standby** and clears a respectful space in the room. Maria knows where the local Gurdwara is, but only if he asks. That's the difference between *'they just knew'* and *'that's creepy'* — and that line is the product." *(optional 15s: play the ElevenLabs voice brief Maria would hear on shift.)*
+> "Here's the part that matters for luxury." *(open the doNotMention panel)* "The system inferred Mr. Sharma is Sikh from past notes. It does **not** place a prayer mat in the room — that would be presumptuous. Instead, it places it in **Back-Office Standby** and clears a respectful space in the room. Maria knows where the local Gurdwara is, but only if he asks. That's the difference between *'they just knew'* and *'that's creepy'* — and that line is the product." *(optional 15s: play the ElevenLabs voice brief Maria would hear on shift.)*
 
 **Close (one breath):**
 > "Validated market, Rosewood's own philosophy, delivered through people — not instead of them. That's GuestFlow."
