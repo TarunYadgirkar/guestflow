@@ -536,50 +536,50 @@ export async function orchestrate(
   guestId: string,
   flightDelayMinutes = 0
 ): Promise<OrchestrationResult> {
-  const guests = load<Guest[]>("guests.json");
-  const guest = guests.find((g) => g.id === guestId);
-  if (!guest) throw new Error(`Guest not found: ${guestId}`);
-
-  const staff = load<StaffMember[]>("staff.json");
-  const localEvents = load<unknown[]>("localEvents.json");
-  const flight = getMockFlight(guest.upcomingReservation.flightNumber, flightDelayMinutes);
-
-  const { member: assignedStaff, reasons, confidence: matchConfidence } = matchHost(guest, staff);
-  const assignment: HostAssignment = {
-    assignedStaffId: assignedStaff.id,
-    continuityFlag: assignedStaff.pastGuestIds.includes(guestId),
-    matchReasons: reasons,
-    confidence: matchConfidence,
-  };
-
-  const prompt = buildPrompt(guest, assignedStaff, assignment, flight, localEvents);
+  const flight = getMockFlight(null, flightDelayMinutes);
 
   try {
+    const guests = load<Guest[]>("guests.json");
+    const guest = guests.find((g) => g.id === guestId);
+    if (!guest) throw new Error(`Guest not found: ${guestId}`);
+
+    const staff = load<StaffMember[]>("staff.json");
+    const localEvents = load<unknown[]>("localEvents.json");
+    const guestFlight = getMockFlight(guest.upcomingReservation.flightNumber, flightDelayMinutes);
+
+    const { member: assignedStaff, reasons, confidence: matchConfidence } = matchHost(guest, staff);
+    const assignment: HostAssignment = {
+      assignedStaffId: assignedStaff.id,
+      continuityFlag: assignedStaff.pastGuestIds.includes(guestId),
+      matchReasons: reasons,
+      confidence: matchConfidence,
+    };
+
+    const prompt = buildPrompt(guest, assignedStaff, assignment, guestFlight, localEvents);
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set in .env");
+    if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
     const client = new Anthropic({ apiKey });
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 8192,
       messages: [{ role: "user", content: prompt }],
-    });
+    }, { signal: AbortSignal.timeout(25_000) });
 
     const raw = message.content[0]?.type === "text" ? message.content[0].text : "";
-    // Strip accidental markdown fences
     const json = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
     const result = JSON.parse(json) as OrchestrationResult;
 
-    // Pre-computed values are authoritative — override whatever Claude produced
-    result.flightStatus = flight;
+    result.flightStatus = guestFlight;
     result.hostAssignment = assignment;
     result.guestId = guestId;
     result.generatedAt = new Date().toISOString();
-    if (result.hostBrief) result.hostBrief.flightStatus = flight;
+    if (result.hostBrief) result.hostBrief.flightStatus = guestFlight;
 
     return result;
   } catch (err) {
-    console.warn("[orchestrate] API error — using hardcoded fallback:", err);
+    console.warn("[orchestrate] error — using hardcoded fallback:", err);
     return getFallback(guestId, flight);
   }
 }
