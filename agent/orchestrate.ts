@@ -1,0 +1,604 @@
+import Anthropic from "@anthropic-ai/sdk";
+import { readFileSync } from "fs";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+import * as dotenv from "dotenv";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+import type {
+  OrchestrationResult,
+  Guest,
+  StaffMember,
+  FlightStatus,
+  MatchReason,
+  HostAssignment,
+} from "../shared/types";
+
+dotenv.config({ path: resolve(__dirname, "../.env") });
+
+const DATA_DIR = resolve(__dirname, "../data");
+
+// ─── DATA LOADERS ────────────────────────────────────────────────────────────
+
+function load<T>(filename: string): T {
+  return JSON.parse(readFileSync(resolve(DATA_DIR, filename), "utf-8")) as T;
+}
+
+// ─── MOCK FLIGHT ─────────────────────────────────────────────────────────────
+
+function getMockFlight(flightNumber: string | null, delayMinutes = 0): FlightStatus {
+  const scheduled = new Date("2026-05-17T22:45:00-07:00");
+  const adjusted = new Date(scheduled.getTime() + delayMinutes * 60_000);
+  const adjTime = adjusted.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "America/Los_Angeles",
+  });
+  return {
+    flightNumber: flightNumber ?? "UA328",
+    status: delayMinutes >= 15 ? "delayed" : "on-time",
+    scheduledArrival: scheduled.toISOString(),
+    adjustedArrival: adjusted.toISOString(),
+    delayMinutes,
+    impact:
+      delayMinutes >= 60
+        ? `Late arrival (est. ${adjTime} PT) + 12.5hr timezone delta. Recovery Protocol activated; amenity swap executed. Circadian Handshake locked at 2700K / 65°F.`
+        : delayMinutes >= 15
+        ? `Minor delay (${delayMinutes} min). Arrival ${adjTime} PT. Standard protocol maintained.`
+        : `On time (${adjTime} PT). Standard arrival protocol.`,
+  };
+}
+
+// ─── HOST MATCHING ───────────────────────────────────────────────────────────
+// Priority: continuity (10pts) → language match (5pts/lang) → affinity (3pts/match) → load (-1pt/guest)
+
+function matchHost(
+  guest: Guest,
+  staff: StaffMember[]
+): { member: StaffMember; reasons: MatchReason[]; confidence: number } {
+  const candidates = staff.filter((s) => s.onShift);
+  if (candidates.length === 0) throw new Error("No staff on shift");
+
+  const scored = candidates.map((s) => {
+    const reasons: MatchReason[] = [];
+    let score = 0;
+
+    if (s.pastGuestIds.includes(guest.id)) {
+      reasons.push({
+        factor: "continuity",
+        detail: `Previously hosted ${guest.firstName} ${guest.lastName}`,
+        weight: 10,
+      });
+      score += 10;
+    }
+
+    const sharedLangs = s.languages.filter((l) => guest.languages.includes(l));
+    if (sharedLangs.length > 0) {
+      reasons.push({
+        factor: "language",
+        detail: `Shared language(s): ${sharedLangs.join(", ")}`,
+        weight: 5,
+      });
+      score += 5 * sharedLangs.length;
+    }
+
+    const affinityMatches = s.specialties.filter((sp) =>
+      guest.preferences.interests.some(
+        (i) =>
+          sp.toLowerCase().includes(i.toLowerCase().split(" ")[0]!) ||
+          i.toLowerCase().includes(sp.toLowerCase().split(" ")[0]!)
+      )
+    );
+    if (affinityMatches.length > 0) {
+      reasons.push({
+        factor: "affinity",
+        detail: `Specialty alignment: ${affinityMatches.slice(0, 2).join(", ")}`,
+        weight: 3,
+      });
+      score += 3 * affinityMatches.length;
+    }
+
+    const load = s.currentLoad ?? 0;
+    reasons.push({
+      factor: "availability",
+      detail: `On shift; current load: ${load} guest(s)`,
+      weight: 1,
+    });
+    score += Math.max(0, 3 - load);
+
+    return { member: s, reasons, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const best = scored[0]!;
+  // Normalize: max theoretical score ~ 10 + 10 + 9 + 3 = 32
+  const confidence = Math.min(0.99, best.score / 32);
+
+  return { member: best.member, reasons: best.reasons, confidence };
+}
+
+// ─── CLAUDE PROMPT ───────────────────────────────────────────────────────────
+
+const SCHEMA = `
+interface OrchestrationResult {
+  guestId: string;
+  generatedAt: string;                  // ISO 8601
+  flightStatus: FlightStatus;           // COPY VERBATIM from provided value
+  roomSpec: RoomSpec;
+  itinerary: GuestItinerary;
+  hostAssignment: HostAssignment;       // COPY VERBATIM from provided value
+  hostBrief: HostBrief;
+  reasoningTrace: TraceStep[];          // exactly 6 steps
+  overallConfidence: number;            // 0–1
+}
+
+interface RoomSpec {
+  temperatureF: number;
+  pillowType: string;
+  minibar: string[];
+  welcomeAmenity: { item: string; rationale: string };
+  environmentNotes: string[];
+  confidence: number;
+  autoApplied: boolean;
+  circadianHandshake: {
+    lightingKelvin: number;
+    temperatureF: number;
+    blackoutBlinds: boolean;
+    rationale: string;
+  };
+  sartorialRescue: {
+    items: string[];
+    climateDeltaF: number;
+    rationale: string;
+    status: "auto" | "staff-review";
+  } | null;
+  dynamicEmpathyAmenity: {
+    original: string;
+    replacement: string;
+    trigger: string;
+    rationale: string;
+    autoApplied: boolean;
+  } | null;
+  backOfficeStandby: Array<{
+    item: string;
+    category: "religious" | "cultural" | "dietary" | "wellness";
+    inferenceSource: string;
+    confidence: number;           // must be < 0.8
+    deliveryPromise: string;
+    roomClearanceNote: string;
+    localResourceInfo?: string;
+  }>;
+}
+
+interface GuestItinerary {
+  nativeLanguage: string | null;
+  dualLanguage: boolean;
+  items: Array<{
+    title: string;
+    type: "dining" | "cultural" | "wellness" | "excursion";
+    when: string;
+    description: string;
+    whyThisGuest: string;
+    confidence: number;
+    status: "auto" | "staff-review";
+    localizedContent?: { language: string; title: string; description: string };
+  }>;
+}
+
+interface HostBrief {
+  forStaffId: string;
+  greeting: string;
+  keyFacts: string[];                      // 3–5 items
+  serviceNotes: string[];
+  doNotMention: string[];                  // HIGH SENSITIVITY SIGNALS GO HERE ONLY
+  flightStatus: FlightStatus;              // COPY VERBATIM from provided value
+  backOfficeStandbyInstructions: string[];
+  voiceBriefUrl?: string;
+}
+
+interface TraceStep {
+  label: string;
+  status: "pending" | "running" | "complete" | "pivoted";
+  detail: string;
+}
+`;
+
+function buildPrompt(
+  guest: Guest,
+  assignedStaff: StaffMember,
+  assignment: HostAssignment,
+  flight: FlightStatus,
+  localEvents: unknown[]
+): string {
+  const highSignals = guest.signals.filter((s) => s.sensitivity === "high");
+  const climateDelta = Math.abs(guest.originProfile.climateF - 62);
+  const arrivalHour = new Date(flight.adjustedArrival).getUTCHours() +
+    (flight.adjustedArrival.includes("-07") ? -7 : -8); // rough PT
+  const isLateArrival = flight.delayMinutes >= 60 || arrivalHour >= 21 || arrivalHour <= 2;
+
+  return `You are the GuestFlow orchestration engine for Rosewood Hotels.
+
+Produce one JSON object matching the OrchestrationResult schema exactly.
+Output ONLY valid JSON — no markdown fences, no explanation, no trailing text.
+
+## SCHEMA
+${SCHEMA}
+
+## RULES (all mandatory)
+1. HIGH SENSITIVITY signals → hostBrief.doNotMention ONLY. Never appear in greeting, keyFacts, guest-facing content, or itinerary. Never state the inference aloud.
+2. CIRCADIAN HANDSHAKE: always present. Late arrival (≥9 PM local) or delayMinutes ≥ 60 → lightingKelvin 2700, temperatureF 65, blackoutBlinds true.
+3. SARTORIAL RESCUE: trigger when climateDelta ≥ 20°F. status "auto" if ≥ 30°F, "staff-review" if 20–29°F. Null when < 20°F.
+4. DYNAMIC EMPATHY AMENITY: trigger when isLateArrival = true. Swap default champagne → recovery protocol (bone broth, herbal tea, electrolyte water). autoApplied true.
+5. BACK-OFFICE STANDBY: religious/cultural inferences with confidence < 0.8 → StandbyItem[]. Never auto-place in room. Include localResourceInfo for religious items.
+6. LANGUAGE LENS: if guest.preferredLanguage !== "English" → dualLanguage true, nativeLanguage = preferredLanguage, localizedContent on EVERY itinerary item.
+7. ITINERARY: 3–4 items from localEvents, matched to guest interests + dietary + arrival timing. First item after a late arrival should be morning wellness.
+8. HOST BRIEF: warm, specific, addressed to the named host. 3–5 keyFacts. 2–4 doNotMention entries (all high-sensitivity inferences + flight tracking inference).
+9. REASONING TRACE: exactly 6 steps with these labels in order:
+   - "Pulling stay history"
+   - "Analyzing signals & drawing the creepy line"
+   - "Checking flight status"
+   - "Matching host"
+   - "Building room spec & protocols"
+   - "Composing host brief & itinerary"
+   If flight was delayed: "Checking flight status" step → status "pivoted".
+   All others → status "complete".
+10. hostAssignment and flightStatus are pre-computed — copy them VERBATIM from the values below.
+
+## COMPUTED INPUTS
+climateDelta: ${climateDelta}°F
+isLateArrival: ${isLateArrival}
+delayMinutes: ${flight.delayMinutes}
+
+## HIGH SENSITIVITY SIGNALS (doNotMention candidates — do NOT act on openly)
+${JSON.stringify(highSignals, null, 2)}
+
+## FLIGHT STATUS (copy verbatim into result.flightStatus and hostBrief.flightStatus)
+${JSON.stringify(flight, null, 2)}
+
+## HOST ASSIGNMENT (copy verbatim into result.hostAssignment)
+${JSON.stringify(assignment, null, 2)}
+
+## ASSIGNED HOST PROFILE
+${JSON.stringify(assignedStaff, null, 2)}
+
+## GUEST PROFILE
+${JSON.stringify(guest, null, 2)}
+
+## LOCAL EVENTS (source itinerary items from these)
+${JSON.stringify(localEvents, null, 2)}
+
+Output only the JSON object. Start with { and end with }.`;
+}
+
+// ─── HARDCODED FALLBACK (demo safety — covers full g_tarun demo arc) ─────────
+
+function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult {
+  if (guestId !== "g_tarun") {
+    throw new Error(`No fallback defined for guestId: ${guestId}. API call must succeed.`);
+  }
+
+  const adjTime = new Date(flight.adjustedArrival).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "America/Los_Angeles",
+  });
+  const flightPivoted = flight.delayMinutes > 0;
+
+  return {
+    guestId: "g_tarun",
+    generatedAt: new Date().toISOString(),
+    flightStatus: flight,
+    roomSpec: {
+      temperatureF: 65,
+      pillowType: "firm",
+      minibar: [
+        "still water (Acqua Panna)",
+        "chamomile tea selection",
+        "fresh fruit bowl",
+        "dark chocolate (70% cacao)",
+        "electrolyte water sachets",
+      ],
+      welcomeAmenity: {
+        item: "Bone broth, chamomile tea, and a handwritten note from Maria in Hindi",
+        rationale:
+          "Late arrival after 12.5-hour timezone crossing calls for recovery, not celebration. Champagne deferred to morning.",
+      },
+      environmentNotes: [
+        "High-floor Garden Suite with eastern exposure for morning light",
+        "Blackout blinds fully closed on arrival",
+        "Ambient lighting preset to 2700K (warm/sleep)",
+        "Room temperature locked at 65°F",
+        "High shelf cleared — personal tray placed for turban or sacred items",
+        "Yoga mat staged in closet for 7 AM setup on request",
+        "Fresh orchids (not roses — preference noted from London stay)",
+        "Type D adapter pre-placed at desk",
+      ],
+      confidence: 0.93,
+      autoApplied: true,
+      circadianHandshake: {
+        lightingKelvin: 2700,
+        temperatureF: 65,
+        blackoutBlinds: true,
+        rationale: `12.5-hour timezone delta (Asia/Kolkata → PT) + ${adjTime} arrival. Sleep-recovery preset engaged.`,
+      },
+      sartorialRescue: {
+        items: ["premium loaner windbreaker (navy)", "compact umbrella"],
+        climateDeltaF: 33,
+        rationale:
+          "Mr. Singh departs Mumbai at 95°F and arrives Menlo Park at ~62°F — a 33°F drop. Windbreaker pre-staged in suite closet.",
+        status: "auto",
+      },
+      dynamicEmpathyAmenity: {
+        original: "Champagne & strawberries",
+        replacement: "Bone broth, chamomile tea, electrolyte water, fresh fruit bowl",
+        trigger: `Late arrival (est. ${adjTime} PT) + 12.5hr timezone delta`,
+        rationale:
+          "Champagne on a jetlagged, non-drinking guest signals we did not read the file. Recovery protocol signals we did.",
+        autoApplied: true,
+      },
+      backOfficeStandby: [
+        {
+          item: "Sikh prayer mat (janamaz)",
+          category: "religious",
+          inferenceSource:
+            "Past stay note (Rosewood London): explicit request for turban stand. LinkedIn confirms Sikh community affiliation in Mumbai.",
+          confidence: 0.72,
+          deliveryPromise: "60-second back-office delivery on request",
+          roomClearanceNote:
+            "High shelf cleared; personal tray placed. No mat auto-placed in room.",
+          localResourceInfo:
+            "Gurdwara Sahib of San Jose — 3636 Gurdwara Ave, San Jose, CA 95111 — 14 min by car",
+        },
+      ],
+    },
+    itinerary: {
+      nativeLanguage: "Hindi",
+      dualLanguage: true,
+      items: [
+        {
+          title: "Sunrise Meditation & Yoga on the Garden Terrace",
+          type: "wellness",
+          when: "Sun May 18, 6:30 AM",
+          description:
+            "Private guided yoga and meditation on Rosewood's garden terrace at first light. Mats, cushions, and herbal tea provided. Quiet, on-property, no commute required.",
+          whyThisGuest:
+            "Mr. Singh brings his own meditation cushion on every stay and requests 6 AM yoga setup daily. This starts his anniversary morning calm and grounded.",
+          confidence: 0.97,
+          status: "auto",
+          localizedContent: {
+            language: "Hindi",
+            title: "उद्यान छत पर सूर्योदय ध्यान और योग",
+            description:
+              "रोज़वुड के उद्यान छत पर प्रथम प्रकाश में निजी योग और ध्यान सत्र। चटाइयाँ, तकिए और हर्बल चाय उपलब्ध। शांत, होटल परिसर में ही।",
+          },
+        },
+        {
+          title: "Madera Restaurant — Vegetarian Tasting Menu",
+          type: "dining",
+          when: "Sun May 18, 7:00 PM",
+          description:
+            "Chef's seasonal vegetarian progression — California farm-to-table produce, no alcohol required, paired with artisanal herbal infusions. Private terrace seating available.",
+          whyThisGuest:
+            "Strict vegetarian, no alcohol. On-property removes travel friction after a late first night. Private terrace is ideal for an intimate evening — no occasion needs to be named.",
+          confidence: 0.95,
+          status: "auto",
+          localizedContent: {
+            language: "Hindi",
+            title: "मैडेरा रेस्तरां — शाकाहारी चखने का मेनू",
+            description:
+              "मौसमी शाकाहारी प्रस्तुति — कैलिफोर्निया के ताज़े उत्पाद, शराब की आवश्यकता नहीं, हर्बल इन्फ्यूजन के साथ। निजी छत पर बैठने की व्यवस्था उपलब्ध।",
+          },
+        },
+        {
+          title: "Filoli Estate Dawn Garden Walk",
+          type: "wellness",
+          when: "Mon May 19, 7:00 AM",
+          description:
+            "Pre-opening guided walk through Filoli's 16-acre formal garden at dawn. Peak rose and wisteria bloom. One of the Bay Area's most contemplative mornings.",
+          whyThisGuest:
+            "Meditation and architecture are top interests. Filoli's designed serenity maps perfectly. Private, quiet, non-touristy. Light enough after the previous evening.",
+          confidence: 0.88,
+          status: "auto",
+          localizedContent: {
+            language: "Hindi",
+            title: "फिलोली एस्टेट में भोर की बगीचे की सैर",
+            description:
+              "फिलोली के 16 एकड़ के औपचारिक उद्यान में भोर के समय उद्घाटन से पहले एक निर्देशित भ्रमण। गुलाब और विस्टेरिया के पूर्ण खिले फूल।",
+          },
+        },
+        {
+          title: "Cantor Arts Center: 'Visions of Silicon Valley'",
+          type: "cultural",
+          when: "Mon May 19, 11:00 AM",
+          description:
+            "Exhibition on how Silicon Valley's architecture and objects shaped global design aesthetics. Original artifacts from Apple, IDEO, and Pixar. Stanford campus — 3 min from hotel.",
+          whyThisGuest:
+            "Contemporary art and architecture are primary interests. Stanford proximity keeps it effortless. Light afternoon activity — appropriate complement to an active morning.",
+          confidence: 0.85,
+          status: "auto",
+          localizedContent: {
+            language: "Hindi",
+            title: "कैंटर आर्ट्स सेंटर: 'सिलिकॉन वैली के दर्शन'",
+            description:
+              "प्रदर्शनी जो यह दर्शाती है कि कैसे सिलिकॉन वैली की वास्तुकला और वस्तुओं ने वैश्विक सौंदर्यशास्त्र को आकार दिया। Apple, IDEO और Pixar की मूल कलाकृतियाँ। Stanford परिसर में।",
+          },
+        },
+      ],
+    },
+    hostAssignment: {
+      assignedStaffId: "s_maria",
+      continuityFlag: true,
+      matchReasons: [
+        {
+          factor: "continuity",
+          detail:
+            "Personally hosted Mr. Singh at Rosewood London (Nov 2024) and Rosewood Bangkok (Mar 2025). Mr. Singh cited Maria by name in his Bangkok review.",
+          weight: 10,
+        },
+        {
+          factor: "language",
+          detail: "Fluent Hindi — can greet and brief in Mr. Singh's native language",
+          weight: 5,
+        },
+        {
+          factor: "affinity",
+          detail:
+            "Specializes in South Asian guest relations, Sikh cultural familiarity, and wellness coordination",
+          weight: 3,
+        },
+        {
+          factor: "availability",
+          detail: "On shift; current load: 1 guest",
+          weight: 1,
+        },
+      ],
+      confidence: 0.98,
+    },
+    hostBrief: {
+      forStaffId: "s_maria",
+      greeting:
+        "Maria — Mr. Singh is back, and he asked for you. Meet him at the entrance, greet in Hindi, keep it warm and brief. He will be exhausted from a long flight and a big timezone crossing.",
+      keyFacts: [
+        `Arriving ${adjTime} PT on UA328 from Mumbai via connection — 12.5-hour timezone crossing.${flightPivoted ? ` Flight delayed ${flight.delayMinutes} min; amenity and room protocol already adjusted.` : ""}`,
+        "Strict vegetarian, absolutely no alcohol. Minibar and welcome amenity already swapped to recovery protocol — do not offer champagne.",
+        "Wife Priya accompanies. She prefers sparkling water and has a nut allergy. Confirm with room service before morning.",
+        "Third Rosewood stay, first time at Sand Hill — treat this arrival as a full property introduction.",
+        "Yoga mat setup at 7 AM requested daily. Confirm with housekeeping before your shift ends tonight.",
+      ],
+      serviceNotes: [
+        "He reads menus carefully — always confirm vegetarian notes verbally, not assumed.",
+        "Very private traveler. No turndown intrusion unless explicitly requested.",
+        "He brings a personal meditation cushion; the high shelf is cleared for it — mention this casually.",
+        "Type D adapter is pre-staged at the desk. Point it out on arrival so he knows it's there.",
+        "If he mentions needing space for morning practice, offer the garden terrace yoga session (6:30 AM, on-property).",
+      ],
+      doNotMention: [
+        "Do not reference the anniversary. We see May 18 marked in his linked calendar ('Our Day — 9 years with Priya'). If he chooses to celebrate, he will say so. The private terrace dinner is arranged for Sunday evening — say nothing unless he raises it.",
+        "Do not reference his faith or Sikh practice. We inferred it from past stay notes (turban stand request, London) and his public community affiliation. A prayer mat is in back-office standby — only surface it if he indicates interest in a practice space.",
+        "Do not say 'We saw your flight was delayed' or reference flight tracking. Simply acknowledge his journey was long and that the room is ready.",
+        "Do not proactively mention the loaner windbreaker. If he comments on the cold, say 'We thought of that' and present it.",
+      ],
+      flightStatus: flight,
+      backOfficeStandbyInstructions: [
+        "If Mr. Singh mentions prayer, meditation, or a practice space: say 'We have something set aside — I can have it in your room in just a moment.' Retrieve the prayer mat from back-office. Do not pre-announce it or name it.",
+        "If he asks about nearby places of worship: 'The Gurdwara Sahib of San Jose is about 14 minutes by car — I'm happy to arrange a car at any time.'",
+      ],
+    },
+    reasoningTrace: [
+      {
+        label: "Pulling stay history",
+        status: "complete",
+        detail:
+          "2 past stays found — Rosewood London (Nov 2024) and Rosewood Bangkok (Mar 2025). Both hosted by s_maria. Strong continuity signal established. Priya noted as companion in both stays.",
+      },
+      {
+        label: "Analyzing signals & drawing the creepy line",
+        status: "complete",
+        detail:
+          "2 high-sensitivity signals detected: (1) calendar — wedding anniversary May 18 inferred from linked calendar event; (2) social — Sikh practice inferred from turban stand request + LinkedIn affiliation. Both routed to doNotMention. Acting on them silently, not openly.",
+      },
+      {
+        label: "Checking flight status",
+        status: flightPivoted ? "pivoted" : "complete",
+        detail: flightPivoted
+          ? `UA328 delayed ${flight.delayMinutes} min. Arrival now ${adjTime} PT. Late arrival + 12.5hr timezone delta detected. PIVOT: Champagne → Recovery Protocol (bone broth, chamomile, electrolytes). Circadian Handshake locked at 2700K / 65°F.`
+          : `UA328 on time. Arrival ${adjTime} PT. Late arrival detected (>9 PM). Dynamic Empathy and Circadian Handshake activated as standard.`,
+      },
+      {
+        label: "Matching host",
+        status: "complete",
+        detail:
+          "s_maria selected: continuity match (score 10) + Hindi fluency (score 5) + South Asian cultural specialty (score 3) + on shift (load 1). Confidence 0.98. Next candidate 18 points behind.",
+      },
+      {
+        label: "Building room spec & protocols",
+        status: "complete",
+        detail:
+          "Circadian Handshake: 2700K / 65°F / blackout engaged. Sartorial Rescue: 33°F delta → windbreaker auto-staged (status auto). Dynamic Empathy: champagne → recovery protocol. Back-Office Standby: Sikh prayer mat (confidence 0.72) held in reserve; high shelf cleared. Type D adapter pre-placed.",
+      },
+      {
+        label: "Composing host brief & itinerary",
+        status: "complete",
+        detail:
+          "Hindi Language Lens active — all 4 itinerary items localized. Items matched to vegetarian + meditation + contemporary art interests, sequenced for recovery after late arrival. doNotMention layer: 4 entries. Standby instructions: 2 entries. Host brief ready.",
+      },
+    ],
+    overallConfidence: 0.94,
+  };
+}
+
+// ─── MAIN EXPORT ─────────────────────────────────────────────────────────────
+
+/**
+ * Orchestrates a full arrival plan for the given guest.
+ * @param guestId - e.g. "g_tarun"
+ * @param flightDelayMinutes - inject a mock delay for the demo pivot (default 0)
+ */
+export async function orchestrate(
+  guestId: string,
+  flightDelayMinutes = 0
+): Promise<OrchestrationResult> {
+  const guests = load<Guest[]>("guests.json");
+  const guest = guests.find((g) => g.id === guestId);
+  if (!guest) throw new Error(`Guest not found: ${guestId}`);
+
+  const staff = load<StaffMember[]>("staff.json");
+  const localEvents = load<unknown[]>("localEvents.json");
+  const flight = getMockFlight(guest.upcomingReservation.flightNumber, flightDelayMinutes);
+
+  const { member: assignedStaff, reasons, confidence: matchConfidence } = matchHost(guest, staff);
+  const assignment: HostAssignment = {
+    assignedStaffId: assignedStaff.id,
+    continuityFlag: assignedStaff.pastGuestIds.includes(guestId),
+    matchReasons: reasons,
+    confidence: matchConfidence,
+  };
+
+  const prompt = buildPrompt(guest, assignedStaff, assignment, flight, localEvents);
+
+  try {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set in .env");
+    const client = new Anthropic({ apiKey });
+
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 4096,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const raw = message.content[0]?.type === "text" ? message.content[0].text : "";
+    // Strip accidental markdown fences
+    const json = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
+    const result = JSON.parse(json) as OrchestrationResult;
+
+    // Pre-computed values are authoritative — override whatever Claude produced
+    result.flightStatus = flight;
+    result.hostAssignment = assignment;
+    result.guestId = guestId;
+    result.generatedAt = new Date().toISOString();
+    if (result.hostBrief) result.hostBrief.flightStatus = flight;
+
+    return result;
+  } catch (err) {
+    console.warn("[orchestrate] API error — using hardcoded fallback:", err);
+    return getFallback(guestId, flight);
+  }
+}
+
+// ─── CLI ─────────────────────────────────────────────────────────────────────
+
+// Works with both CJS (require.main) and ESM/tsx (argv check)
+const isMain =
+  (typeof require !== "undefined" && require.main === module) ||
+  process.argv[1]?.replace(/\\/g, "/").endsWith("agent/orchestrate.ts");
+
+if (isMain) {
+  const guestId = process.argv[2] ?? "g_tarun";
+  const delayMin = process.argv[3] ? parseInt(process.argv[3], 10) : 0;
+  orchestrate(guestId, delayMin)
+    .then(result => process.stdout.write(JSON.stringify(result, null, 2) + "\n"))
+    .catch(err => { console.error(err); process.exit(1); });
+}
