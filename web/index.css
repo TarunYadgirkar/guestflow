@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F9F7F4;
+  --surface: #FFFFFF;
+  --surface-alt: #F4F1ED;
+  --border: #E5DDD4;
+  --border-light: #EDE8E3;
+  --text-primary: #1C1917;
+  --text-secondary: #6B6258;
+  --text-muted: #9C8E85;
+  --accent: #9C7D5A;
+  --accent-light: #C4A882;
+  --danger: #9B1C1C;
+  --danger-bg: #FEF2F2;
+  --danger-border: #FCA5A5;
+  --success: #1A4731;
+  --success-bg: #F0FDF4;
+  --pivot: #7C2D12;
+  --pivot-bg: #FFF7ED;
+  --pivot-border: #FED7AA;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Reasoning trace pulse animation */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.trace-running .trace-dot {
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+
+/* Fade-in for panels */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-enter {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Confidence bar */
+.confidence-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.8s ease-out;
+}

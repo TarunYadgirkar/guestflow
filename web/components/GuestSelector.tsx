@@ -1,56 +1,120 @@
 import React from 'react';
 
-// Minimal interface for the UI cards
-interface GuestProfile {
+interface GuestCard {
   id: string;
+  title: string;
   name: string;
-  description: string;
+  tier: string;
+  tags: string[];
+  flag: string;
 }
 
-const GUESTS: GuestProfile[] = [
-  { id: 'g_tarun', name: 'Tarun Singh', description: 'Returning Guest • Anniversary • High Continuity' },
-  { id: 'g_priscilla', name: 'Priscilla Tan', description: 'First-Time • Business / VC • High Tech Gap' },
-  { id: 'g_park', name: 'Daniel Park', description: 'Family Stay • Birthday • Continuity' },
+const GUESTS: GuestCard[] = [
+  {
+    id: 'g_tarun',
+    title: 'Mr.',
+    name: 'Tarun Singh',
+    tier: 'Rosewood Elite',
+    tags: ['Anniversary · 9 yrs', 'Hindi Language Lens', 'Sikh Standby Protocol', 'UA328 Mumbai'],
+    flag: '🇮🇳',
+  },
+  {
+    id: 'g_mei',
+    title: 'Ms.',
+    name: 'Mei Chen',
+    tier: 'Rosewood Elite',
+    tags: ['Stanford AI Summit', 'Mandarin Language Lens', 'Privacy Protocol', 'CX870 Hong Kong'],
+    flag: '🇨🇳',
+  },
+  {
+    id: 'g_yuki',
+    title: 'Ms.',
+    name: 'Yuki Tanaka',
+    tier: 'Rosewood Signature',
+    tags: ['Japanese Language Lens', 'Ceramics · Wellness', 'JL068 Tokyo'],
+    flag: '🇯🇵',
+  },
+  {
+    id: 'g_carlos',
+    title: 'Mr.',
+    name: 'Carlos Rivera',
+    tier: 'Rosewood Signature',
+    tags: ['Sand Hill VC Summit', 'Spanish Language Lens', 'AM696 Mexico City'],
+    flag: '🇲🇽',
+  },
 ];
 
 interface GuestSelectorProps {
   selectedGuestId: string | null;
-  onSelect: (guestId: string) => void;
+  onSelect: (id: string) => void;
+  disabled?: boolean;
 }
 
-export default function GuestSelector({ selectedGuestId, onSelect }: GuestSelectorProps) {
+export default function GuestSelector({ selectedGuestId, onSelect, disabled }: GuestSelectorProps) {
   return (
-    <div className="w-full max-w-4xl mx-auto py-8">
-      <h2 className="text-xl font-medium text-gray-900 mb-6 font-serif">Select Guest Profile</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {GUESTS.map((guest) => {
+    <section>
+      <h2
+        className="text-xs tracking-[0.2em] uppercase mb-5 font-sans"
+        style={{ color: 'var(--text-muted)' }}
+      >
+        Arriving Guests
+      </h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {GUESTS.map(guest => {
           const isSelected = selectedGuestId === guest.id;
           return (
             <button
               key={guest.id}
-              onClick={() => onSelect(guest.id)}
-              className={`
-                relative flex flex-col text-left p-6 rounded-xl border transition-all duration-300
-                ${isSelected 
-                  ? 'border-black bg-black text-white shadow-lg scale-[1.02]' 
-                  : 'border-gray-200 bg-white text-gray-900 hover:border-gray-400 hover:shadow-md'
-                }
-              `}
+              onClick={() => !disabled && onSelect(guest.id)}
+              disabled={disabled}
+              className="relative text-left p-5 rounded-xl border transition-all duration-200"
+              style={{
+                borderColor: isSelected ? 'var(--text-primary)' : 'var(--border)',
+                backgroundColor: isSelected ? 'var(--text-primary)' : 'var(--surface)',
+                boxShadow: isSelected ? '0 4px 20px rgba(0,0,0,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                opacity: disabled && !isSelected ? 0.6 : 1,
+              }}
             >
-              <span className={`text-sm font-medium tracking-wider uppercase mb-2 ${isSelected ? 'text-gray-300' : 'text-gray-500'}`}>
-                {guest.id}
-              </span>
-              <span className="text-2xl font-serif mb-3">
-                {guest.name}
-              </span>
-              <span className={`text-sm leading-relaxed ${isSelected ? 'text-gray-300' : 'text-gray-600'}`}>
-                {guest.description}
-              </span>
-              
+              {/* Flag + tier */}
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xl">{guest.flag}</span>
+                <span
+                  className="text-xs tracking-wide"
+                  style={{ color: isSelected ? 'rgba(255,255,255,0.5)' : 'var(--text-muted)' }}
+                >
+                  {guest.tier}
+                </span>
+              </div>
+
+              {/* Name */}
+              <p
+                className="font-serif text-xl font-light leading-tight mb-1"
+                style={{ color: isSelected ? '#FFFFFF' : 'var(--text-primary)' }}
+              >
+                {guest.title} {guest.name}
+              </p>
+
+              {/* Tags */}
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {guest.tags.map(tag => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-0.5 rounded-full"
+                    style={{
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.12)' : 'var(--surface-alt)',
+                      color: isSelected ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)',
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
               {isSelected && (
                 <div className="absolute top-4 right-4">
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               )}
@@ -58,6 +122,6 @@ export default function GuestSelector({ selectedGuestId, onSelect }: GuestSelect
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }
