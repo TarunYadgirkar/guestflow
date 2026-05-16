@@ -6,24 +6,20 @@ interface RosewoodLogoProps {
 }
 
 export default function RosewoodLogo({ size = 'medium', className }: RosewoodLogoProps) {
-  const fontSize = size === 'small' ? '18px' : '24px';
+  const height = size === 'small' ? '32px' : '48px';
 
   return (
     <div className={className}>
-      <h2
+      <img
+        src="https://upload.wikimedia.org/wikipedia/en/thumb/9/91/Rosewood_Hotel_Group.svg/1280px-Rosewood_Hotel_Group.svg.png"
+        alt="Rosewood Hotels & Resorts"
         style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: fontSize,
-          fontWeight: 300,
-          letterSpacing: '0.12em',
-          color: 'var(--text)',
-          margin: 0,
-          lineHeight: 1,
-          textTransform: 'uppercase',
+          height: height,
+          width: 'auto',
+          objectFit: 'contain',
+          opacity: 0.95,
         }}
-      >
-        Rosewood
-      </h2>
+      />
     </div>
   );
 }
