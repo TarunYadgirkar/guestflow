@@ -82,9 +82,11 @@
 | Field | Type | Notes |
 |---|---|---|
 | `temperatureF` | number | |
+| `lightingScene` | string | e.g. "Warm Dim" \| "Jetlag Recovery" |
 | `pillowType` | string | |
 | `minibar` | string[] | |
-| `welcomeAmenity` | `{ item: string; rationale: string }` | rationale ties to "Sense of Place" |
+| `welcomeAmenity` | `{ item: string; rationale: string; isSartorialRescue?: boolean }` | rationale ties to "Sense of Place" |
+| `backOfficeStandbyItems` | `Array<{ item, rationale }>` | Items held in back office (Standby Protocol) |
 | `environmentNotes` | string[] | "blackout blinds preset" |
 | `confidence` | number (0–1) | |
 | `autoApplied` | boolean | true if confidence ≥ 0.8 |
@@ -96,7 +98,8 @@
 | `title` | string | a real, specific local thing |
 | `type` | "dining"\|"cultural"\|"wellness"\|"excursion" | |
 | `when` | string | "Fri 7:30 PM" |
-| `description` | string | |
+| `description` | string | English version |
+| `translatedDescription` | string \| null | Native Language version (Language Lens) |
 | `whyThisGuest` | string | personalization rationale |
 | `confidence` | number (0–1) | |
 | `status` | "auto"\|"staff-review" | |

@@ -68,9 +68,18 @@ export interface StaffMember {
 
 export interface RoomSpec {
   temperatureF: number;
+  lightingScene: string;       // e.g. "Warm Dim" | "Jetlag Recovery"
   pillowType: string;
   minibar: string[];
-  welcomeAmenity: { item: string; rationale: string };
+  welcomeAmenity: { 
+    item: string; 
+    rationale: string;
+    isSartorialRescue?: boolean; // Sartorial Rescue feature
+  };
+  backOfficeStandbyItems: {    // Back-Office Standby Protocol
+    item: string;
+    rationale: string;
+  }[];
   environmentNotes: string[];
   confidence: number;          // 0..1
   autoApplied: boolean;        // true if confidence >= 0.8
@@ -80,7 +89,8 @@ export interface ItineraryItem {
   title: string;
   type: "dining" | "cultural" | "wellness" | "excursion";
   when: string;                // "Fri 7:30 PM"
-  description: string;
+  description: string;         // English description
+  translatedDescription?: string; // Language Lens: Native language description
   whyThisGuest: string;
   confidence: number;
   status: "auto" | "staff-review";
