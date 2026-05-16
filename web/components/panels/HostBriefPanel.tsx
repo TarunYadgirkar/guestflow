@@ -10,6 +10,14 @@ interface Props {
   style?: React.CSSProperties;
 }
 
+// Data source icons and labels
+const DATA_SOURCES = {
+  past: { icon: '📊', label: 'Past stay notes', color: 'var(--accent)' },
+  advisor: { icon: '✦', label: 'Elite advisor', color: 'var(--accent)' },
+  form: { icon: '📋', label: 'Guest form', color: 'var(--accent)' },
+  reservation: { icon: '🏨', label: 'Reservation', color: 'var(--accent)' },
+};
+
 export default function HostBriefPanel({ hostBrief, className, style }: Props) {
   const [voicePlaying, setVoicePlaying] = useState(false);
   const staff = (staffData as unknown as StaffRecord[]).find(s => s.id === hostBrief.forStaffId);
@@ -50,12 +58,12 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
         <div className="flex items-start justify-between">
           <div>
             <h3 className="font-serif text-xl font-light">Host Brief</h3>
-            <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Artifact 4</p>
+            <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Talk-track & service notes for arrival</p>
           </div>
           {staff && (
             <div className="text-right">
               <p className="text-sm font-medium">{staff.name}</p>
-              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{staff.role}</p>
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Guest Experience Host</p>
             </div>
           )}
         </div>
@@ -87,7 +95,9 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
 
         {/* Greeting */}
         <div>
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--text-muted)' }}>Greeting</p>
+          <p className="text-xs tracking-widest uppercase mb-2 flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-sm">🎤</span>Greeting
+          </p>
           <blockquote
             className="font-serif text-base font-light leading-relaxed pl-4 italic"
             style={{ borderLeft: '2px solid var(--accent)', color: 'var(--text-primary)' }}
@@ -96,27 +106,47 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
           </blockquote>
         </div>
 
-        {/* Key Facts */}
+        {/* Key Facts (with data sources) */}
         <div>
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--text-muted)' }}>Key Facts</p>
-          <ol className="space-y-2">
-            {hostBrief.keyFacts.map((fact, i) => (
-              <li key={i} className="flex gap-2.5 text-sm">
-                <span
-                  className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0 mt-0.5"
-                  style={{ backgroundColor: 'var(--surface-alt)', color: 'var(--accent)' }}
-                >
-                  {i + 1}
-                </span>
-                <span style={{ color: 'var(--text-secondary)' }}>{fact}</span>
-              </li>
-            ))}
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Key Facts</p>
+            <button
+              className="text-xs px-2 py-1 rounded border"
+              style={{
+                borderColor: 'var(--border)',
+                backgroundColor: 'var(--surface-alt)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+              }}
+            >
+              Confirm with guest
+            </button>
+          </div>
+          <ol className="space-y-2.5">
+            {hostBrief.keyFacts.map((fact, i) => {
+              // Infer data source from fact content
+              const source = fact.includes('past stay') || fact.includes('hosted') ? 'past' :
+                             fact.includes('Elite') || fact.includes('advisor') ? 'advisor' :
+                             fact.includes('Rosewood') ? 'reservation' : 'form';
+              const src = DATA_SOURCES[source as keyof typeof DATA_SOURCES] || DATA_SOURCES.form;
+
+              return (
+                <li key={i} className="flex gap-2.5 text-sm group">
+                  <div className="flex items-start gap-1.5 flex-1">
+                    <span className="flex-shrink-0 mt-0.5 text-xs" title={src.label}>{src.icon}</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{fact}</span>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         </div>
 
         {/* Service Notes */}
         <div>
-          <p className="text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--text-muted)' }}>Service Notes</p>
+          <p className="text-xs tracking-widest uppercase mb-2.5 flex items-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-sm">✓</span>Service Notes
+          </p>
           <ul className="space-y-1.5">
             {hostBrief.serviceNotes.map((note, i) => (
               <li key={i} className="flex gap-2 text-sm">
@@ -134,17 +164,17 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
             style={{ backgroundColor: '#FEF9C3', border: '1px solid #FDE047' }}
           >
             <p className="text-xs font-medium tracking-widest uppercase mb-2" style={{ color: '#713F12' }}>
-              📦 Standby Instructions
+              📦 If Guest Requests (Back-Office Items)
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5">
               {hostBrief.backOfficeStandbyInstructions.map((instr, i) => (
-                <li key={i} className="text-sm" style={{ color: '#78350F' }}>{instr}</li>
+                <li key={i} className="text-xs" style={{ color: '#78350F' }}>→ {instr}</li>
               ))}
             </ul>
           </div>
         )}
 
-        {/* DO NOT MENTION — THE DIFFERENTIATOR */}
+        {/* Internal Operational Flags (NOT for guest) */}
         <div
           className="rounded-lg overflow-hidden"
           style={{ border: '1px solid var(--danger-border)' }}
@@ -153,14 +183,14 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
             className="px-4 py-3 flex items-center gap-2"
             style={{ backgroundColor: 'var(--danger)', color: 'white' }}
           >
-            <span className="text-base">⚠</span>
+            <span className="text-base">🔒</span>
             <span className="text-xs font-semibold tracking-[0.15em] uppercase">
-              Do Not Mention
+              Internal Flags (Staff Only)
             </span>
-            <span className="text-xs opacity-75 ml-auto">Inferred · Never speak aloud</span>
+            <span className="text-xs opacity-75 ml-auto">Never mention to guest</span>
           </div>
           <div
-            className="p-4 space-y-3"
+            className="p-4 space-y-2.5"
             style={{ backgroundColor: 'var(--danger-bg)' }}
           >
             {hostBrief.doNotMention.map((item, i) => (
@@ -186,12 +216,12 @@ export default function HostBriefPanel({ hostBrief, className, style }: Props) {
           {voicePlaying ? (
             <>
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              Playing voice brief… (click to stop)
+              Playing brief… (click to stop)
             </>
           ) : (
             <>
               <span>🎙</span>
-              Hear Maria's Brief
+              Play Voice Brief
             </>
           )}
         </button>

@@ -24,9 +24,19 @@ const STATUS_CONFIG = {
   pivoted: {
     dotColor: '#EA580C',
     labelColor: 'var(--pivot)',
-    badge: 'PIVOTED',
+    badge: 'CHANGED',
   },
 };
+
+// Realistic Rosewood operational steps
+const REALISTIC_LABELS = [
+  'Pulling stay history & preferences',
+  'Checking reservation & Elite advisor notes',
+  'Verifying flight arrival & ETA',
+  'Assigning host & availability',
+  'Generating room setup protocol',
+  'Preparing host brief & service notes',
+];
 
 export default function ReasoningTrace({ steps }: ReasoningTraceProps) {
   return (
@@ -35,7 +45,7 @@ export default function ReasoningTrace({ steps }: ReasoningTraceProps) {
         className="text-xs tracking-[0.2em] uppercase mb-5 font-sans"
         style={{ color: 'var(--text-muted)' }}
       >
-        Reasoning Trace
+        Arrival Preparation Process
       </h2>
 
       <div
@@ -48,8 +58,11 @@ export default function ReasoningTrace({ steps }: ReasoningTraceProps) {
             const isRunning = step.status === 'running';
             const isLast = i === steps.length - 1;
 
+            // Use realistic labels if available
+            const displayLabel = i < REALISTIC_LABELS.length ? REALISTIC_LABELS[i] : step.label;
+
             return (
-              <div key={step.label} className="flex gap-4">
+              <div key={i} className="flex gap-4">
                 {/* Timeline spine */}
                 <div className="flex flex-col items-center">
                   <div
@@ -78,7 +91,7 @@ export default function ReasoningTrace({ steps }: ReasoningTraceProps) {
                       className="text-sm font-medium"
                       style={{ color: cfg.labelColor }}
                     >
-                      {step.label}
+                      {displayLabel}
                     </span>
                     {cfg.badge && (
                       <span

@@ -144,58 +144,116 @@ export default function App() {
           disabled={phase === 'tracing'}
         />
 
-        {/* Orchestrate controls */}
+        {/* Arrival plan controls */}
         {selectedGuestId && (
-          <div className="mt-8 flex items-center gap-6">
-            {/* Delay toggle */}
-            <button
-              onClick={() => setDelayMinutes(d => d === 0 ? 240 : 0)}
-              disabled={phase === 'tracing'}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg border text-sm transition-all"
-              style={{
-                borderColor: delayMinutes > 0 ? 'var(--pivot-border)' : 'var(--border)',
-                backgroundColor: delayMinutes > 0 ? 'var(--pivot-bg)' : 'var(--surface)',
-                color: delayMinutes > 0 ? 'var(--pivot)' : 'var(--text-secondary)',
-                cursor: phase === 'tracing' ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <span
-                className="w-8 h-4 rounded-full inline-flex items-center transition-all relative"
-                style={{ backgroundColor: delayMinutes > 0 ? '#FB923C' : 'var(--border)' }}
-              >
-                <span
-                  className="w-3 h-3 rounded-full bg-white shadow transition-all absolute"
-                  style={{ left: delayMinutes > 0 ? '18px' : '2px' }}
-                />
-              </span>
-              <span className="font-medium">Inject 4-hour flight delay</span>
-              {delayMinutes > 0 && <span className="text-xs opacity-75">(demo pivot)</span>}
-            </button>
+          <div className="mt-8 space-y-5">
+            {/* Settings row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {/* Flight status */}
+              <div>
+                <label className="text-xs tracking-widest uppercase mb-1.5 block" style={{ color: 'var(--text-muted)' }}>
+                  Flight status
+                </label>
+                <select
+                  onChange={(e) => setDelayMinutes(e.target.value === 'delayed' ? 240 : 0)}
+                  disabled={phase === 'tracing'}
+                  className="w-full text-sm px-3 py-2 rounded-lg border"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--surface)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <option value="ontime">On-time</option>
+                  <option value="delayed">Delayed 4+ hours</option>
+                </select>
+                <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+                  {delayMinutes > 0 ? 'Testing: late arrival' : 'Standard protocol'}
+                </p>
+              </div>
 
-            {/* Orchestrate button */}
-            <button
-              onClick={handleOrchestrate}
-              disabled={!canOrchestrate}
-              className="px-8 py-2.5 rounded-lg text-sm font-medium tracking-wide transition-all"
-              style={{
-                backgroundColor: canOrchestrate ? 'var(--text-primary)' : 'var(--border)',
-                color: canOrchestrate ? 'var(--bg)' : 'var(--text-muted)',
-                cursor: canOrchestrate ? 'pointer' : 'not-allowed',
-                letterSpacing: '0.08em',
-              }}
-            >
-              {phase === 'tracing' ? 'Orchestrating…' : 'Orchestrate Arrival →'}
-            </button>
+              {/* Room readiness */}
+              <div>
+                <label className="text-xs tracking-widest uppercase mb-1.5 block" style={{ color: 'var(--text-muted)' }}>
+                  Room readiness
+                </label>
+                <select
+                  disabled={phase === 'tracing'}
+                  className="w-full text-sm px-3 py-2 rounded-lg border"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--surface)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <option>Clean & ready</option>
+                  <option>Being cleaned</option>
+                  <option>Not ready</option>
+                </select>
+              </div>
 
-            {phase === 'done' && (
+              {/* Trip purpose confirmation */}
+              <div>
+                <label className="text-xs tracking-widest uppercase mb-1.5 block" style={{ color: 'var(--text-muted)' }}>
+                  Trip purpose
+                </label>
+                <select
+                  disabled={phase === 'tracing'}
+                  className="w-full text-sm px-3 py-2 rounded-lg border"
+                  style={{
+                    borderColor: 'var(--border)',
+                    backgroundColor: 'var(--surface)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <option>Anniversary – 9 yrs</option>
+                  <option>Business – conference</option>
+                  <option>Family vacation</option>
+                  <option>Wellness retreat</option>
+                </select>
+              </div>
+
+              {/* Testing checkbox */}
+              <div className="flex items-end">
+                <label className="flex items-center gap-2 cursor-pointer text-sm">
+                  <input
+                    type="checkbox"
+                    checked={delayMinutes > 0}
+                    onChange={(e) => setDelayMinutes(e.target.checked ? 240 : 0)}
+                    disabled={phase === 'tracing'}
+                    style={{ cursor: phase === 'tracing' ? 'not-allowed' : 'pointer' }}
+                  />
+                  <span style={{ color: 'var(--text-muted)' }}>Internal testing mode</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Generate plan button + reset */}
+            <div className="flex items-center gap-4">
               <button
-                onClick={() => { setPhase('idle'); setResult(null); setLiveTrace([]); }}
-                className="text-sm"
-                style={{ color: 'var(--text-muted)', cursor: 'pointer' }}
+                onClick={handleOrchestrate}
+                disabled={!canOrchestrate}
+                className="px-8 py-2.5 rounded-lg text-sm font-medium tracking-wide transition-all"
+                style={{
+                  backgroundColor: canOrchestrate ? 'var(--text-primary)' : 'var(--border)',
+                  color: canOrchestrate ? 'var(--bg)' : 'var(--text-muted)',
+                  cursor: canOrchestrate ? 'pointer' : 'not-allowed',
+                  letterSpacing: '0.08em',
+                }}
               >
-                Reset
+                {phase === 'tracing' ? 'Generating plan…' : 'Generate Arrival Plan →'}
               </button>
-            )}
+
+              {phase === 'done' && (
+                <button
+                  onClick={() => { setPhase('idle'); setResult(null); setLiveTrace([]); }}
+                  className="text-sm"
+                  style={{ color: 'var(--text-muted)', cursor: 'pointer' }}
+                >
+                  Reset
+                </button>
+              )}
+            </div>
           </div>
         )}
 

@@ -37,7 +37,7 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
       {/* Header */}
       <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-light)' }}>
         <h3 className="font-serif text-xl font-light">Host Assignment</h3>
-        <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Artifact 3</p>
+        <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Guest Experience Host</p>
       </div>
 
       <div className="p-6 space-y-5">
@@ -88,38 +88,30 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
               ))}
             </div>
 
-            {/* Confidence bar */}
-            <div className="mt-4 flex items-center gap-3">
-              <div className="confidence-bar flex-1">
-                <div className="confidence-fill" style={{ width: `${assignment.confidence * 100}%` }} />
-              </div>
-              <span className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
-                {Math.round(assignment.confidence * 100)}% match
+            {/* Match quality */}
+            <div className="mt-4 flex items-center gap-2">
+              <span
+                className="text-xs px-3 py-1 rounded-full font-medium"
+                style={{
+                  backgroundColor: assignment.confidence > 0.85 ? 'var(--success-bg)' : 'var(--surface-alt)',
+                  color: assignment.confidence > 0.85 ? 'var(--success)' : 'var(--accent)',
+                }}
+              >
+                {assignment.confidence > 0.85 ? '✓ Strong match' : '○ Good fit'}
               </span>
             </div>
           </div>
         )}
 
-        {/* Match reasons */}
+        {/* Match reasoning */}
         <div>
-          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: 'var(--text-muted)' }}>Match Reasoning</p>
-          <div className="space-y-3">
+          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: 'var(--text-muted)' }}>Why Maria</p>
+          <div className="space-y-2.5">
             {assignment.matchReasons.map((reason, i) => (
-              <div key={i} className="flex gap-3">
-                <span className="text-base flex-shrink-0 mt-0.5">{FACTOR_ICONS[reason.factor] ?? '·'}</span>
+              <div key={i} className="flex gap-2">
+                <span className="text-lg flex-shrink-0">{FACTOR_ICONS[reason.factor] ?? '·'}</span>
                 <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-xs font-medium tracking-wide uppercase"
-                      style={{ color: 'var(--text-secondary)' }}
-                    >
-                      {reason.factor}
-                    </span>
-                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                      weight {reason.weight}
-                    </span>
-                  </div>
-                  <p className="text-sm mt-0.5" style={{ color: 'var(--text-primary)' }}>{reason.detail}</p>
+                  <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{reason.detail}</p>
                 </div>
               </div>
             ))}

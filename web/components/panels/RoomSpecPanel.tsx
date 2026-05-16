@@ -24,19 +24,25 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
       {/* Panel header */}
       <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: 'var(--border-light)' }}>
         <div>
-          <h3 className="font-serif text-xl font-light">Room & Amenity Spec</h3>
-          <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Artifact 1</p>
+          <h3 className="font-serif text-xl font-light">Room Setup Protocol</h3>
+          <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>For housekeeping & ops</p>
         </div>
-        <div className="text-right">
-          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Confidence</span>
-          <p className="text-sm font-medium" style={{ color: 'var(--accent)' }}>{Math.round(roomSpec.confidence * 100)}%</p>
-          <ConfidenceBar value={roomSpec.confidence} />
-        </div>
+        <button
+          className="text-xs px-3 py-1.5 rounded-lg border"
+          style={{
+            borderColor: 'var(--border)',
+            backgroundColor: 'var(--surface-alt)',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+          }}
+        >
+          Edit / Confirm
+        </button>
       </div>
 
       <div className="p-6 space-y-5 overflow-y-auto" style={{ maxHeight: '520px' }}>
 
-        {/* Circadian Handshake — always prominent */}
+        {/* Sleep & Jet Lag Protocol — always present */}
         <div
           className="rounded-lg p-4"
           style={{ backgroundColor: 'var(--surface-alt)', border: '1px solid var(--border-light)' }}
@@ -44,10 +50,10 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
           <div className="flex items-center gap-2 mb-2">
             <span className="text-base">🌙</span>
             <span className="text-xs font-medium tracking-widest uppercase" style={{ color: 'var(--accent)' }}>
-              Circadian Handshake
+              Sleep & Jet Lag Protocol
             </span>
             <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--success-bg)', color: 'var(--success)' }}>
-              Auto-applied
+              Standard
             </span>
           </div>
           <div className="grid grid-cols-3 gap-3 text-sm">

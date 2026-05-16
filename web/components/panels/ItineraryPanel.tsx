@@ -27,8 +27,8 @@ export default function ItineraryPanel({ itinerary, className, style }: Props) {
       <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-light)' }}>
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-serif text-xl font-light">Guest Itinerary</h3>
-            <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Artifact 2</p>
+            <h3 className="font-serif text-xl font-light">Stay Plan & Bookings</h3>
+            <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Concierge-assembled itinerary</p>
           </div>
 
           {/* Language Lens toggle */}
@@ -95,26 +95,42 @@ export default function ItineraryPanel({ itinerary, className, style }: Props) {
                     </div>
                   </div>
 
-                  {/* When */}
-                  <p className="text-xs mt-0.5 mb-1.5" style={{ color: 'var(--accent)' }}>{item.when}</p>
+                  {/* When + Location */}
+                  <p className="text-xs mt-0.5 mb-1.5" style={{ color: 'var(--accent)' }}>
+                    {item.when} • {item.status === 'auto' ? 'On-property' : 'Off-property'}
+                  </p>
 
                   {/* Description */}
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{description}</p>
 
-                  {/* Why this guest */}
-                  <p className="text-xs mt-2 italic" style={{ color: 'var(--text-muted)' }}>
-                    {item.whyThisGuest}
-                  </p>
-
-                  {/* Confidence */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="confidence-bar flex-1">
-                      <div className="confidence-fill" style={{ width: `${item.confidence * 100}%` }} />
-                    </div>
-                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                      {Math.round(item.confidence * 100)}%
+                  {/* Source & Status */}
+                  <div className="mt-2 flex gap-2">
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: item.status === 'auto' ? 'var(--success-bg)' : 'var(--pivot-bg)',
+                        color: item.status === 'auto' ? 'var(--success)' : 'var(--pivot)',
+                      }}
+                    >
+                      {item.status === 'auto' ? '✓ Confirmed' : '○ Requested'}
+                    </span>
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: 'var(--surface-alt)',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Source: {item.whyThisGuest.includes('concierge') ? 'Concierge suggested' : item.whyThisGuest.includes('guest') ? 'Guest request' : 'Package'}
                     </span>
                   </div>
+
+                  {/* Dietary notes if applicable */}
+                  {item.whyThisGuest.toLowerCase().includes('vegetarian') && (
+                    <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
+                      🥗 Vegetarian, no alcohol, quiet seating
+                    </p>
+                  )}
 
                   {/* Show both languages when dual-language */}
                   {itinerary.dualLanguage && item.localizedContent && lang === 'native' && (
