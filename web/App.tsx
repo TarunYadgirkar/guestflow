@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from '@phosphor-icons/react';
-import type { OrchestrationResult, TraceStep } from '../shared/types';
+import type { OrchestrationResult, TraceStep, Guest } from '../shared/types';
+import guestsData from '../data/guests.json';
 import GuestSelector from './components/GuestSelector';
 import ReasoningTrace from './components/ReasoningTrace';
 import RoomSpecPanel from './components/panels/RoomSpecPanel';
@@ -9,6 +10,7 @@ import HostAssignmentPanel from './components/panels/HostAssignmentPanel';
 import HostBriefPanel from './components/panels/HostBriefPanel';
 import RosewoodLogo from './components/RosewoodLogo';
 import PropertySelector from './components/PropertySelector';
+import StayCalendar from './components/StayCalendar';
 
 type Phase = 'idle' | 'tracing' | 'done' | 'error';
 
@@ -148,14 +150,21 @@ export default function App() {
       </header>
 
       <main className="max-w-full px-8 py-8">
-        {/* Top Section: Guest Selection + Controls */}
-        <div className="mb-8">
-          <GuestSelector
-            selectedGuestId={selectedGuestId}
-            onSelect={handleSelectGuest}
-            propertyId={selectedPropertyId}
-            disabled={phase === 'tracing'}
-          />
+        {/* Top Section: Guest Selection + Calendar */}
+        <div className="grid grid-cols-3 gap-8 mb-8">
+          <div className="col-span-2">
+            <GuestSelector
+              selectedGuestId={selectedGuestId}
+              onSelect={handleSelectGuest}
+              propertyId={selectedPropertyId}
+              disabled={phase === 'tracing'}
+            />
+          </div>
+          {selectedGuestId && (
+            <div className="col-span-1">
+              <StayCalendar guest={selectedGuestId ? (guestsData as Guest[]).find(g => g.id === selectedGuestId) ?? null : null} />
+            </div>
+          )}
         </div>
 
         {/* Controls */}

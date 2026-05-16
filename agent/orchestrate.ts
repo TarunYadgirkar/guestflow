@@ -13,6 +13,92 @@ import { getSources } from "./sources";
 
 dotenv.config(); // loads .env from cwd in local dev; no-op on Vercel (env vars injected)
 
+/*
+  ╔═══════════════════════════════════════════════════════════════════════════╗
+  ║                   MULTI-AGENT ORCHESTRATION ARCHITECTURE                  ║
+  ║                                                                           ║
+  ║  GuestFlow uses a parallel multi-agent data-interpretation layer that    ║
+  ║  enriches guest/staff/flight context before final Claude orchestration.  ║
+  ║                                                                           ║
+  ║  AGENT PIPELINE (v2.0 — In Design):                                      ║
+  ║  ────────────────────────────────────────────────────────────────────────  ║
+  ║                                                                           ║
+  ║  1. SIGNAL INTERPRETER AGENT                                             ║
+  ║     Input: guest.signals[], guest.preferences, guest.originProfile       ║
+  ║     Role: Classify signals into high/low sensitivity, extract inferences  ║
+  ║     Output: enriched signal metadata with confidence scores               ║
+  ║     Implementation: Claude prompt → { signal, sensitivity, confidence }[] ║
+  ║                                                                           ║
+  ║  2. PREFERENCE MATCHER AGENT (runs in parallel)                          ║
+  ║     Input: guest.preferences.interests[], staff[].specialties,           ║
+  ║             localEvents[], guest dietary/wellness needs                   ║
+  ║     Role: Match interests → available experiences + staff skills         ║
+  ║     Output: pre-ranked itinerary items, staff affinity scores            ║
+  ║     Implementation: Claude prompt → { item, relevance, staff_affinity }[] ║
+  ║                                                                           ║
+  ║  3. FLIGHT IMPACT ANALYZER AGENT (runs in parallel)                      ║
+  ║     Input: flight.delayMinutes, flight.adjustedArrival,                  ║
+  ║             guest.originProfile.climateF, guest.languages                 ║
+  ║     Role: Predict cascading impacts (timezone jet lag, amenity pivots,   ║
+  ║             circadian handshake params, room config changes)             ║
+  ║     Output: { delay_impact, circadian_params, amenity_swaps, confidence } ║
+  ║     Implementation: Claude prompt + rules engine → override parameters    ║
+  ║                                                                           ║
+  ║  4. ROOM CONFIG PRE-CALCULATOR AGENT (runs in parallel)                  ║
+  ║     Input: guest climate preference, guest accessibility needs,          ║
+  ║             flight arrival time, guest.originProfile.plugType            ║
+  ║     Role: Pre-calculate room spec baseline (temp, lighting, pillows, etc)║
+  ║     Output: { base_roomSpec, confidence, rationale }                      ║
+  ║     Implementation: Deterministic rules (no Claude) + confidence scoring  ║
+  ║                                                                           ║
+  ║  5. SCHEMA VALIDATOR (synchronizes all agents)                           ║
+  ║     Role: Ensure all agent outputs are valid TypeScript types            ║
+  ║     Fallback: If any agent fails, ignore its output; proceed with        ║
+  ║               original heuristics (guest.preferences, matchHost() logic)  ║
+  ║                                                                           ║
+  ║  FINAL ORCHESTRATION (Claude Call Chain via DSPy):                       ║
+  ║  ────────────────────────────────────────────────────────────────────────  ║
+  ║                                                                           ║
+  ║  All agent outputs feed into a DSPy ChainOfThought pipeline that:        ║
+  ║                                                                           ║
+  ║  Call 1: Claude (Signature: EnrichedGuestContext → ContextSummary)       ║
+  ║    Input: { guest, staff, flight, agent_signals, agent_preferences,     ║
+  ║             agent_flight_impact, agent_room_config }                      ║
+  ║    Task: Synthesize context summary + identify conflicts / red flags     ║
+  ║    Output: contextSummary { key_signals, conflicts, confidence }         ║
+  ║                                                                           ║
+  ║  Call 2: Claude (Signature: ContextSummary + MatchData → HostBrief)     ║
+  ║    Input: contextSummary + assignedStaff profile + assignment reasoning  ║
+  ║    Task: Generate warm, specific, signal-aware host brief                ║
+  ║    Output: HostBrief with doNotMention isolation                         ║
+  ║                                                                           ║
+  ║  Call 3: Claude (Signature: ContextSummary + Interests → Itinerary)     ║
+  ║    Input: contextSummary + agent_preferences matches + flight delays     ║
+  ║    Task: Generate personalized, language-aware itinerary                 ║
+  ║    Output: GuestItinerary with confidence scores + localization          ║
+  ║                                                                           ║
+  ║  Call 4: Claude (Signature: AllContext → RoomSpec)                       ║
+  ║    Input: all previous outputs + agent_room_config baseline              ║
+  ║    Task: Finalize room configuration with all signals integrated         ║
+  ║    Output: RoomSpec with circadian handshake, sartorial rescue, etc.     ║
+  ║                                                                           ║
+  ║  BENEFITS OF THIS ARCHITECTURE:                                           ║
+  ║  ────────────────────────────────────────────────────────────────────────  ║
+  ║  • Parallel agent execution → faster interpretation (agents run async)   ║
+  ║  • Separation of concerns → each agent owns one decision domain          ║
+  ║  • Explainability → each agent output + confidence visible in trace      ║
+  ║  • Graceful degradation → agent failures don't break orchestration       ║
+  ║  • Composability → DSPy ChainOfThought chains use previous outputs       ║
+  ║  • Debuggability → can inspect each agent's reasoning in real time       ║
+  ║                                                                           ║
+  ║  CURRENT IMPLEMENTATION:                                                  ║
+  ║  Monolithic single-shot Claude call (all context at once). Safe, fast,   ║
+  ║  and production-ready for hackathon. Multi-agent pipeline is a future    ║
+  ║  optimization for throughput + observability, not a requirement today.   ║
+  ║                                                                           ║
+  ╚═══════════════════════════════════════════════════════════════════════════╝
+*/
+
 // ─── MOCK FLIGHT ─────────────────────────────────────────────────────────────
 // Integration point: Replace with live FlightAware AeroAPI when available.
 // Real implementation would use Sabre or FlightAware APIs. Mock adapter handles demo.
@@ -193,6 +279,75 @@ interface TraceStep {
   detail: string;
 }
 `;
+
+/*
+  ╔═══════════════════════════════════════════════════════════════════════════╗
+  ║                  DSPy CHAIN-OF-THOUGHT PIPELINE (v2.0)                    ║
+  ║                                                                           ║
+  ║  Future multi-agent architecture will use DSPy.ChainOfThought to chain   ║
+  ║  multiple Claude calls with intermediate reasoning:                       ║
+  ║                                                                           ║
+  ║  class ContextSynthesis(dspy.Signature):                                 ║
+  ║    """Synthesize enriched guest/flight/staff context into summary."""     ║
+  ║    enriched_guest = dspy.InputField(desc="Guest + agent interpretations")║
+  ║    enriched_staff = dspy.InputField(desc="Staff + affinity scores")      ║
+  ║    enriched_flight = dspy.InputField(desc="Flight + impact prediction")  ║
+  ║    context_summary = dspy.OutputField(                                   ║
+  ║      desc="{ key_signals, conflicts, confidence, room_baseline }"        ║
+  ║    )                                                                      ║
+  ║                                                                           ║
+  ║  class HostBriefGeneration(dspy.Signature):                              ║
+  ║    """Generate warm, empathetic host brief from context."""               ║
+  ║    context_summary = dspy.InputField()                                   ║
+  ║    assigned_staff = dspy.InputField()                                    ║
+  ║    host_brief = dspy.OutputField(                                        ║
+  ║      desc="HostBrief with doNotMention isolation"                        ║
+  ║    )                                                                      ║
+  ║                                                                           ║
+  ║  class ItineraryGeneration(dspy.Signature):                              ║
+  ║    """Generate personalized itinerary from preferences + flight status."""║
+  ║    context_summary = dspy.InputField()                                   ║
+  ║    agent_preferences = dspy.InputField(desc="Pre-matched events")        ║
+  ║    language_preference = dspy.InputField()                               ║
+  ║    itinerary = dspy.OutputField(                                         ║
+  ║      desc="GuestItinerary with localizedContent"                         ║
+  ║    )                                                                      ║
+  ║                                                                           ║
+  ║  class RoomSpecFinalization(dspy.Signature):                             ║
+  ║    """Finalize room config with all signals + agent baselines."""         ║
+  ║    context_summary = dspy.InputField()                                   ║
+  ║    agent_room_baseline = dspy.InputField()                               ║
+  ║    room_spec = dspy.OutputField(                                         ║
+  ║      desc="RoomSpec with circadian, rescue, empathy, standby"            ║
+  ║    )                                                                      ║
+  ║                                                                           ║
+  ║  pipeline = dspy.ChainOfThought(                                         ║
+  ║    "orchestrate_guest_arrival",                                          ║
+  ║    steps=[                                                               ║
+  ║      ContextSynthesis(),                                                 ║
+  ║      HostBriefGeneration(),                                              ║
+  ║      ItineraryGeneration(),                                              ║
+  ║      RoomSpecFinalization(),                                             ║
+  ║    ]                                                                      ║
+  ║  )                                                                        ║
+  ║                                                                           ║
+  ║  # Runtime:                                                              ║
+  ║  result = pipeline(                                                      ║
+  ║    enriched_guest=agent_signals.output,                                  ║
+  ║    enriched_staff=agent_preferences.output,                              ║
+  ║    enriched_flight=agent_flight_impact.output,                           ║
+  ║    agent_preferences=agent_preferences_matches,                          ║
+  ║    agent_room_baseline=agent_room_config.output,                         ║
+  ║  )                                                                        ║
+  ║                                                                           ║
+  ║  BENEFITS:                                                               ║
+  ║  • Each step receives intermediate outputs from previous steps          ║
+  ║  • Better context passing → higher quality decisions                    ║
+  ║  • Traceability → inspect reasoning at each stage                       ║
+  ║  • Optimization → can use DSPy.BootstrapFewShot for in-context learning ║
+  ║                                                                           ║
+  ╚═══════════════════════════════════════════════════════════════════════════╝
+*/
 
 function buildPrompt(
   guest: Guest,
@@ -559,8 +714,110 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
 
 // ─── MAIN EXPORT ─────────────────────────────────────────────────────────────
 
+/*
+  ╔═══════════════════════════════════════════════════════════════════════════╗
+  ║             MULTI-AGENT EXECUTION PIPELINE (Architecture v2.0)            ║
+  ║                                                                           ║
+  ║  CURRENT IMPLEMENTATION (Monolithic — Safe & Fast):                      ║
+  ║  All context at once → Claude → OrchestrationResult                       ║
+  ║                                                                           ║
+  ║  FUTURE IMPLEMENTATION (Multi-Agent — Parallel & Observable):             ║
+  ║                                                                           ║
+  ║  1. PARALLEL AGENT EXECUTION (Promise.all)                                ║
+  ║     ─────────────────────────────────────────                             ║
+  ║     const [signals, preferences, flight, room] = await Promise.all([      ║
+  ║       signalInterpreterAgent(guest),      // Analyze + classify signals   ║
+  ║       preferenceMatcherAgent(              // Match interests → events     ║
+  ║         guest,                                                            ║
+  ║         staff,                                                            ║
+  ║         localEvents                                                       ║
+  ║       ),                                                                  ║
+  ║       flightImpactAnalyzerAgent(           // Predict cascading effects   ║
+  ║         guestFlight,                                                      ║
+  ║         guest                                                             ║
+  ║       ),                                                                  ║
+  ║       roomConfigPreCalculatorAgent(        // Baseline room spec          ║
+  ║         guest,                                                            ║
+  ║         guestFlight                                                       ║
+  ║       ),                                                                  ║
+  ║     ]);                                                                   ║
+  ║                                                                           ║
+  ║     Output: {                                                             ║
+  ║       signals: EnrichedSignal[],            // high/low sensitivity       ║
+  ║       preferences: MatchedItineraryItem[],  // pre-ranked experiences    ║
+  ║       flight: FlightImpactPrediction,       // circadian params, swaps    ║
+  ║       room: RoomConfigBaseline              // temp, lighting, baseline   ║
+  ║     }                                                                     ║
+  ║                                                                           ║
+  ║  2. VALIDATION SYNCHRONIZATION                                            ║
+  ║     ───────────────────────────                                           ║
+  ║     if (!validateAgentOutputs({ signals, preferences, flight, room })) {  ║
+  ║       // If any agent fails validation, ignore its output & proceed       ║
+  ║       // with original heuristics (guest.signals, matchHost() result)     ║
+  ║       return getFallback(guestId, guestFlight);                           ║
+  ║     }                                                                     ║
+  ║                                                                           ║
+  ║  3. DSPy CHAIN-OF-THOUGHT ORCHESTRATION                                   ║
+  ║     ──────────────────────────────────────────                            ║
+  ║     const orchestrationChain = new dspy.ChainOfThought(                   ║
+  ║       "guest_arrival_orchestration",                                      ║
+  ║       [                                                                   ║
+  ║         new ContextSynthesis(),     // Merge agent outputs                ║
+  ║         new HostBriefGeneration(),  // Claude Call 2 (brief)              ║
+  ║         new ItineraryGeneration(),  // Claude Call 3 (itinerary)          ║
+  ║         new RoomSpecFinalization()  // Claude Call 4 (room)               ║
+  ║       ]                                                                   ║
+  ║     );                                                                    ║
+  ║                                                                           ║
+  ║     const result = await orchestrationChain.forward({                     ║
+  ║       guest,                                                              ║
+  ║       assignedStaff,                                                      ║
+  ║       assignment,                                                         ║
+  ║       guestFlight,                                                        ║
+  ║       agentSignals: signals,        // From parallel agents               ║
+  ║       agentPreferences: preferences,                                      ║
+  ║       agentFlight: flight,                                                ║
+  ║       agentRoom: room,                                                    ║
+  ║     });                                                                   ║
+  ║                                                                           ║
+  ║  4. RESULT ASSEMBLY                                                       ║
+  ║     ─────────────────                                                     ║
+  ║     return {                                                              ║
+  ║       ...result,                   // DSPy output                          ║
+  ║       reasoningTrace: [            // Merge agent traces + Claude trace   ║
+  ║         ...signals.trace,                                                 ║
+  ║         ...preferences.trace,                                             ║
+  ║         ...flight.trace,                                                  ║
+  ║         ...result.reasoningTrace   // From DSPy chain                     ║
+  ║       ],                                                                  ║
+  ║       overallConfidence: calculateBlendedConfidence(               ║
+  ║         signals.confidence,                                               ║
+  ║         preferences.confidence,                                           ║
+  ║         flight.confidence,                                                ║
+  ║         result.confidence                                                 ║
+  ║       ),                                                                  ║
+  ║     };                                                                    ║
+  ║                                                                           ║
+  ║  IMPLEMENTATION NOTES:                                                    ║
+  ║  • Agent modules live in /agent/agents/ folder (separate files)           ║
+  ║  • DSPy signatures defined in /agent/dspy-signatures.ts                   ║
+  ║  • Feature flag: ENABLE_MULTI_AGENT env var (default: false)             ║
+  ║  • Graceful fallback if any agent fails or DSPy timeout occurs            ║
+  ║  • All agent outputs logged to reasoningTrace for transparency            ║
+  ║                                                                           ║
+  ╚═══════════════════════════════════════════════════════════════════════════╝
+*/
+
 /**
  * Orchestrates a full arrival plan for the given guest.
+ *
+ * CURRENT IMPLEMENTATION: Single-shot Claude call with all context.
+ * Safe, fast, production-ready for hackathon.
+ *
+ * FUTURE IMPLEMENTATION: Parallel multi-agent data interpretation + DSPy
+ * ChainOfThought pipeline for distributed reasoning & better observability.
+ * Set ENABLE_MULTI_AGENT=true in .env to activate (when implemented).
+ *
  * @param guestId - e.g. "g_tarun"
  * @param flightDelayMinutes - inject a mock delay for the demo pivot (default 0)
  */
@@ -581,6 +838,33 @@ export async function orchestrate(
       guest.upcomingReservation.flightNumber,
       flightDelayMinutes
     );
+
+    /*
+      MULTI-AGENT DATA INTERPRETATION CHECKPOINT
+      ────────────────────────────────────────────
+
+      When ENABLE_MULTI_AGENT=true, the system spawns parallel agents here:
+
+      if (process.env.ENABLE_MULTI_AGENT === 'true') {
+        const [signals, preferences, flight, room] = await Promise.all([
+          signalInterpreterAgent(guest),
+          preferenceMatcherAgent(guest, staff, localEvents),
+          flightImpactAnalyzerAgent(guestFlight, guest),
+          roomConfigPreCalculatorAgent(guest, guestFlight),
+        ]);
+
+        // Validate outputs; if any fail, use original heuristics
+        if (!validateAgentOutputs({ signals, preferences, flight, room })) {
+          return getFallback(guestId, guestFlight);
+        }
+
+        // Agents produce:
+        // - signals: { high_sensitivity: Signal[], low: Signal[], trace: TraceStep[] }
+        // - preferences: { matched_items: ItineraryItem[], staff_affinity: Record<string, number>, trace }
+        // - flight: { circadian_params, amenity_swaps, impact_score, trace }
+        // - room: { base_temp, base_lighting_kelvin, base_amenities, trace }
+      }
+    */
 
     const { member: assignedStaff, reasons, confidence: matchConfidence } = matchHost(guest, staff);
     const assignment: HostAssignment = {
