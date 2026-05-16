@@ -1,0 +1,63 @@
+[
+  {
+    "id": "s_maria",
+    "name": "Maria Santos",
+    "role": "Guest Experience Host",
+    "languages": ["English", "Hindi", "Spanish", "Portuguese"],
+    "specialties": [
+      "luxury arrival orchestration",
+      "cultural immersion",
+      "wellness coordination",
+      "Sikh cultural familiarity",
+      "South Asian guest relations"
+    ],
+    "pastGuestIds": ["g_tarun"],
+    "onShift": true,
+    "currentLoad": 1
+  },
+  {
+    "id": "s_sophia",
+    "name": "Sophia Chen",
+    "role": "Guest Experience Host",
+    "languages": ["English", "Mandarin", "Cantonese"],
+    "specialties": [
+      "tech executive liaison",
+      "privacy and NDA protocols",
+      "contemporary Chinese art",
+      "private dining curation"
+    ],
+    "pastGuestIds": ["g_mei"],
+    "onShift": true,
+    "currentLoad": 2
+  },
+  {
+    "id": "s_riku",
+    "name": "Riku Tanaka",
+    "role": "Guest Experience Host",
+    "languages": ["English", "Japanese"],
+    "specialties": [
+      "wellness programming",
+      "Japanese cultural traditions",
+      "forest bathing",
+      "ceramics and ikebana"
+    ],
+    "pastGuestIds": ["g_yuki"],
+    "onShift": false,
+    "currentLoad": 0
+  },
+  {
+    "id": "s_james",
+    "name": "James Okafor",
+    "role": "Concierge",
+    "languages": ["English", "French", "Yoruba"],
+    "specialties": [
+      "wine and F&B",
+      "craft spirits and cocktails",
+      "VC and tech ecosystem knowledge",
+      "local culture and live music"
+    ],
+    "pastGuestIds": ["g_carlos"],
+    "onShift": true,
+    "currentLoad": 3
+  }
+]
