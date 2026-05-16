@@ -586,10 +586,10 @@ export async function orchestrate(
 
 // ─── CLI ─────────────────────────────────────────────────────────────────────
 
-// Works with both CJS (require.main) and ESM/tsx (argv check)
+// Only true when invoked directly via tsx/node, never inside a bundled Vercel Lambda
 const isMain =
-  (typeof require !== "undefined" && require.main === module) ||
-  process.argv[1]?.replace(/\\/g, "/").endsWith("agent/orchestrate.ts");
+  process.argv[1]?.replace(/\\/g, "/").endsWith("agent/orchestrate.ts") ||
+  process.argv[1]?.replace(/\\/g, "/").endsWith("agent/orchestrate.js");
 
 if (isMain) {
   const guestId = process.argv[2] ?? "g_tarun";
