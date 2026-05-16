@@ -7,12 +7,14 @@ import ItineraryPanel from './components/panels/ItineraryPanel';
 import HostAssignmentPanel from './components/panels/HostAssignmentPanel';
 import HostBriefPanel from './components/panels/HostBriefPanel';
 import RosewoodLogo from './components/RosewoodLogo';
+import PropertySelector from './components/PropertySelector';
 
 type Phase = 'idle' | 'tracing' | 'done' | 'error';
 
 const TRACE_STEP_INTERVAL_MS = 750;
 
 export default function App() {
+  const [selectedPropertyId, setSelectedPropertyId] = useState('rsw-sandhill');
   const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [phase, setPhase] = useState<Phase>('idle');
@@ -40,6 +42,14 @@ export default function App() {
     setResult(null);
     setLiveTrace([]);
     setError(null);
+  }
+
+  function handlePropertyChange(propertyId: string) {
+    setSelectedPropertyId(propertyId);
+    setSelectedGuestId(null);
+    setPhase('idle');
+    setResult(null);
+    setLiveTrace([]);
   }
 
   function handleOrchestrate() {
@@ -120,17 +130,19 @@ export default function App() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg)' }}>
       {/* Header */}
       <header className="border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
-        <div className="max-w-7xl mx-auto px-8 py-8 flex items-center justify-between">
-          {/* Logo on left */}
-          <div>
+        <div className="max-w-7xl mx-auto px-8 py-6 space-y-4">
+          {/* Top row: Logo + Property selector */}
+          <div className="flex items-center justify-between">
             <RosewoodLogo size="small" />
+            <PropertySelector
+              selectedPropertyId={selectedPropertyId}
+              onSelect={handlePropertyChange}
+              disabled={phase === 'tracing'}
+            />
           </div>
 
-          {/* Property info on right */}
-          <div className="text-right">
-            <p className="font-light text-sm" style={{ color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>
-              Rosewood Sand Hill
-            </p>
+          {/* Subtitle */}
+          <div>
             <p className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
               Operations Dashboard
             </p>
@@ -144,6 +156,7 @@ export default function App() {
         <GuestSelector
           selectedGuestId={selectedGuestId}
           onSelect={handleSelectGuest}
+          propertyId={selectedPropertyId}
           disabled={phase === 'tracing'}
         />
 

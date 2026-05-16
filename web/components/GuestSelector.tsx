@@ -72,10 +72,22 @@ const GUESTS: GuestCard[] = [
 interface GuestSelectorProps {
   selectedGuestId: string | null;
   onSelect: (id: string) => void;
+  propertyId: string;
   disabled?: boolean;
 }
 
-export default function GuestSelector({ selectedGuestId, onSelect, disabled }: GuestSelectorProps) {
+// Map properties to guest IDs
+const PROPERTY_GUEST_MAP: Record<string, string[]> = {
+  'rsw-sandhill': ['g_tarun'],
+  'rsw-beijing': ['g_mei'],
+  'rsw-kyoto': ['g_yuki'],
+  'rsw-mexicocity': ['g_carlos'],
+};
+
+export default function GuestSelector({ selectedGuestId, onSelect, propertyId, disabled }: GuestSelectorProps) {
+  const arrivingGuestIds = PROPERTY_GUEST_MAP[propertyId] || [];
+  const arrivingGuests = GUESTS.filter(g => arrivingGuestIds.includes(g.id));
+
   return (
     <section>
       <h2
@@ -84,8 +96,13 @@ export default function GuestSelector({ selectedGuestId, onSelect, disabled }: G
       >
         Arriving Guests Today
       </h2>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {GUESTS.map(guest => {
+      {arrivingGuests.length === 0 ? (
+        <p style={{ color: 'var(--text-muted)' }} className="text-sm">
+          No guests arriving today at this property.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {arrivingGuests.map(guest => {
           const isSelected = selectedGuestId === guest.id;
           return (
             <button
@@ -189,8 +206,9 @@ export default function GuestSelector({ selectedGuestId, onSelect, disabled }: G
               )}
             </button>
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </section>
   );
 }

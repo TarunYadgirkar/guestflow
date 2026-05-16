@@ -48,7 +48,7 @@
       "roomType": "Garden Suite",
       "partySize": 2,
       "flightNumber": "UA328",
-      "occasion": null
+      "occasion": "Anniversary – 9 yrs"
     },
     "signals": [
       {
@@ -116,7 +116,7 @@
       }
     ],
     "upcomingReservation": {
-      "property": "Rosewood Sand Hill",
+      "property": "Rosewood Beijing",
       "checkIn": "2026-05-17",
       "checkOut": "2026-05-19",
       "roomType": "Deluxe King",
@@ -172,7 +172,7 @@
       }
     ],
     "upcomingReservation": {
-      "property": "Rosewood Sand Hill",
+      "property": "Rosewood Kyoto",
       "checkIn": "2026-05-18",
       "checkOut": "2026-05-21",
       "roomType": "Garden View Room",
@@ -228,7 +228,7 @@
       }
     ],
     "upcomingReservation": {
-      "property": "Rosewood Sand Hill",
+      "property": "Rosewood Mexico City",
       "checkIn": "2026-05-17",
       "checkOut": "2026-05-20",
       "roomType": "Deluxe King",
