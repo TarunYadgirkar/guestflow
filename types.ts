@@ -21,11 +21,10 @@
  * (core) Captures the guest's departure-city context.
  * Feeds: CircadianHandshake, SartorialRescue, Tech Continuity lens.
  */
-export interface OriginProfile {
-  timezone: string;                                             // e.g. "Asia/Kolkata", "Europe/London"
-  climateF: number;                                            // departure city temp in °F
-  plugType: string;                                            // e.g. "Type D" (India), "Type G" (UK), "Type A" (US)
-  preferredTelecom: "WhatsApp" | "WeChat" | "SMS" | "iMessage"; // communication channel to use
+export interface TechProfile {
+  plugType: string;
+  preferredMessaging: string;
+  esimNeeded: boolean;
 }
 
 /**
@@ -33,9 +32,11 @@ export interface OriginProfile {
  * High sensitivity signals are almost always doNotMention candidates.
  */
 export interface Signal {
-  kind: "calendar" | "social" | "loyalty" | "weather";
-  detail: string;             // e.g. "Wedding anniversary falls on stay dates (linked calendar)"
-  sensitivity: "low" | "medium" | "high"; // high → likely doNotMention
+  signal: string;
+  confidence: number;
+  sensitivity: string; // e.g. "do_not_mention", "do_not_verbalize", "actionable"
+  source: string;
+  action: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -46,58 +47,70 @@ export interface Signal {
  * (core) Guest preferences drawn from stay history and profile data.
  */
 export interface Preferences {
-  water: "still" | "sparkling";
-  roomTempF: number;
-  pillowType: "firm" | "down" | "hypoallergenic";
-  floor: "high" | "low" | "any";
-  quietRoom: boolean;
-  dietary: string[];          // e.g. ["vegetarian", "no shellfish"]
-  wakeUpTime: string | null;  // "06:00" | null
-  interests: string[];        // e.g. ["contemporary art", "trail running", "natural wine"]
+  room: Record<string, any>;
+  dining: Record<string, any>;
+  communication: Record<string, any>;
 }
 
 /**
  * (core) A single past stay record — the primary continuity + personalization signal.
  */
 export interface PastStay {
-  property: string;           // e.g. "Rosewood Bangkok"
-  checkIn: string;            // ISO date
-  checkOut: string;           // ISO date
-  hostStaffId: string | null; // continuity key — who hosted them
-  serviceNotes: string;       // free-text notes from that stay
-  highlight?: string;         // (nice) what specifically delighted them
+  stayId: string;
+  property: string;           
+  dates: string;            
+  hostStaffId: string | null; 
+  notes: string;       
+}
+
+export interface PartyMember {
+  role: string;
+  name: string;
+  ageYears?: number;
 }
 
 /**
  * (core) The upcoming reservation — the pipeline trigger.
  */
 export interface Reservation {
+  reservationId: string;
   property: string;
-  checkIn: string;            // ISO date
-  checkOut: string;           // ISO date
-  roomType: string;           // e.g. "Garden Suite"
-  partySize: number;
+  checkIn: string;
+  checkOut: string;
+  roomCategory: string;
+  rateCode: string;
+  billingEntity?: string;
   flightNumber: string | null;
-  occasion: string | null;    // "anniversary" | "business" | "birthday" | null
+  originAirport: string;
+  destinationAirport: string;
+  scheduledArrival: string;
+  partySize: number;
+  partyComposition: PartyMember[];
+  purpose?: string;
+  guestNotes?: string;
 }
 
 /**
  * (core) Root guest entity.
- * v1.1 additions: preferredLanguage, originProfile
  */
 export interface Guest {
-  id: string;                          // e.g. "g_tarun"
-  title: string;                       // "Mr." | "Dr." | "Ms."
+  guestId: string;
+  salutation: string;                       
   firstName: string;
   lastName: string;
-  loyaltyTier: string;                 // e.g. "Rosewood Elite"
-  preferredLanguage: string;           // (v1.1) explicit primary language — drives Language Lens
-  languages: string[];                 // all spoken languages, primary first
-  originProfile: OriginProfile;        // (v1.1) departure context
+  originCity: string;
+  originCountry: string;
+  languages: string[];                 
+  primaryLanguage: string;           
+  loyaltyTier: string;                 
+  stayCount: number;
+  currentReservation: Reservation;
+  pastStays: PastStay[];
   preferences: Preferences;
-  stayHistory: PastStay[];
-  upcomingReservation: Reservation;
-  signals: Signal[];                   // soft inferred signals — creepy-line input
+  interests: string[];
+  signals: Signal[];                   
+  doNotMention: string[];
+  techProfile: TechProfile;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

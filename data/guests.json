@@ -1,0 +1,334 @@
+[
+  {
+    "guestId": "g_tarun",
+    "salutation": "Mr.",
+    "firstName": "Tarun",
+    "lastName": "Singh",
+    "originCity": "New York",
+    "originCountry": "USA",
+    "languages": ["English", "Hindi", "Punjabi"],
+    "primaryLanguage": "English",
+    "loyaltyTier": "Founders",
+    "stayCount": 4,
+
+    "currentReservation": {
+      "reservationId": "r_tarun_20260517",
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-17",
+      "checkOut": "2026-05-20",
+      "roomCategory": "Garden Suite",
+      "rateCode": "BAR-LEISURE",
+      "flightNumber": "UA328",
+      "originAirport": "JFK",
+      "destinationAirport": "SFO",
+      "scheduledArrival": "2026-05-17T18:30:00-07:00",
+      "partySize": 2,
+      "partyComposition": [
+        { "role": "primary", "name": "Tarun Singh" },
+        { "role": "partner", "name": "Priya Singh" }
+      ]
+    },
+
+    "pastStays": [
+      {
+        "stayId": "ps_001",
+        "property": "Rosewood London",
+        "dates": "2025-05-17 to 2025-05-20",
+        "hostStaffId": "s_maria",
+        "notes": "Anniversary trip with partner Priya. Requested padded turban stand and rounded hangers on Day 1. 6am runs in Hyde Park every morning. Private viewing at Tate Modern via concierge. Selected natural wine flight at dinner. Tipped Maria personally on departure."
+      },
+      {
+        "stayId": "ps_002",
+        "property": "Rosewood Hong Kong",
+        "dates": "2024-09-04 to 2024-09-08",
+        "hostStaffId": "s_maria",
+        "notes": "Solo business trip. Same turban hardware setup. Tarun specifically re-requested Maria on second night. Heavy laptop use; declined butler unpacking. Drank no alcohol on this trip."
+      },
+      {
+        "stayId": "ps_003",
+        "property": "Rosewood Sand Hill",
+        "dates": "2024-05-16 to 2024-05-19",
+        "hostStaffId": "s_devon",
+        "notes": "Anniversary trip with Priya. Same turban hardware. Asked for trail recommendations Day 1 — sent to Windy Hill. Booked Stanford Cantor private docent tour. Couple ordered natural wine pairing at dinner. Priya mentioned 'our anniversary' to F&B; Tarun did not bring it up himself."
+      },
+      {
+        "stayId": "ps_004",
+        "property": "Rosewood Mayakoba",
+        "dates": "2023-11-12 to 2023-11-17",
+        "hostStaffId": "s_alejandro",
+        "notes": "Solo business trip. Same turban hardware. Declined all spa offers. Desk cleared for laptop work. All dining lacto-vegetarian. No alcohol."
+      }
+    ],
+
+    "preferences": {
+      "room": {
+        "temperatureF": 65,
+        "lighting": "warm_dim_on_arrival",
+        "deskCleared": true,
+        "paddedTurbanStand": true,
+        "roundedHangers": true,
+        "highShelfClearedForPersonalItems": true
+      },
+      "dining": {
+        "behavioralPattern": "Lacto-vegetarian on every recorded stay. No beef ever. No alcohol on solo trips; natural wine with partner.",
+        "naturalWineInterest": "high"
+      },
+      "communication": {
+        "preferredChannel": "email",
+        "whatsappOptIn": false,
+        "smsOptIn": true
+      }
+    },
+
+    "interests": ["contemporary art", "trail running", "natural wine"],
+
+    "signals": [
+      {
+        "signal": "anniversary",
+        "confidence": 0.92,
+        "sensitivity": "do_not_mention",
+        "source": "Booking pattern: 2 of 4 prior stays fall on May 16–19 with partner Priya present. Past stay ps_003 recorded Priya referencing 'our anniversary' to F&B. Tarun has never volunteered it himself.",
+        "action": "Stage anniversary-appropriate touches (fresh peonies, two flutes pre-placed, restaurant hold at 7:30pm). DO NOT verbalize the occasion. DO NOT include a card. If guest raises it, host may warmly acknowledge."
+      },
+      {
+        "signal": "sikh_cultural_context",
+        "confidence": 0.95,
+        "sensitivity": "do_not_verbalize",
+        "source": "4 prior stays across 4 properties consistently requested padded turban stand and rounded hangers. Guest has never requested religious accommodation directly.",
+        "action": "Auto-place padded turban stand + rounded hangers (behavioral precedent, non-invasive). Clear high shelf in master closet for personal items. Source prayer mat + Sikh-appropriate vegetarian menu options to back-office standby for 60-second delivery on request only. DO NOT pre-place prayer mat. Host carries San Jose Gurdwara address (12mi) on her tablet — surface only if guest asks."
+      },
+      {
+        "signal": "host_continuity",
+        "confidence": 0.98,
+        "sensitivity": "actionable",
+        "source": "Tarun re-requested s_maria mid-stay in Hong Kong (ps_002). Maria also hosted the London anniversary stay (ps_001). Speaks fluent Hindi.",
+        "action": "Assign s_maria as primary host. Brief her on London + Hong Kong precedent."
+      },
+      {
+        "signal": "morning_runner",
+        "confidence": 0.88,
+        "sensitivity": "manifest_dont_announce",
+        "source": "Past stay notes show 6am runs in London + trail run request in Sand Hill 2024.",
+        "action": "Place printed Windy Hill + Wunderlich trail map on desk with two bottles of room-temp water. DO NOT say 'we noticed you always run in the mornings.'"
+      }
+    ],
+
+    "doNotMention": [
+      "Do not mention his flight was delayed — even though we acted on it.",
+      "Do not mention the anniversary — let him surface it.",
+      "Do not reference his religion or ethnicity — the turban hardware is a behavioral precedent, not a religious accommodation request.",
+      "Do not offer the prayer mat unprompted — it's on standby in back office.",
+      "Do not say 'welcome back to Rosewood' in a way that counts his stays — he prefers understated recognition.",
+      "Do not say 'we noticed you always run in the mornings' — the trail map on the desk says it for us."
+    ],
+
+    "techProfile": {
+      "plugType": "Type A/B (US domestic, no adapter needed)",
+      "preferredMessaging": "iMessage / email",
+      "esimNeeded": false
+    }
+  },
+  {
+    "guestId": "g_priscilla",
+    "salutation": "Ms.",
+    "firstName": "Priscilla",
+    "lastName": "Tan",
+    "originCity": "Singapore",
+    "originCountry": "Singapore",
+    "languages": ["English", "Mandarin"],
+    "primaryLanguage": "English",
+    "loyaltyTier": "First-Time Guest",
+    "stayCount": 0,
+
+    "currentReservation": {
+      "reservationId": "r_priscilla_20260517",
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-17",
+      "checkOut": "2026-05-19",
+      "roomCategory": "Manor Suite",
+      "rateCode": "CORP-TEMASEK",
+      "billingEntity": "Temasek Holdings",
+      "flightNumber": "SQ002",
+      "originAirport": "SIN",
+      "destinationAirport": "SFO",
+      "scheduledArrival": "2026-05-17T20:45:00-07:00",
+      "partySize": 1,
+      "partyComposition": [
+        { "role": "primary", "name": "Priscilla Tan" }
+      ],
+      "purpose": "Business — 2-day investor meetings on Sand Hill Road"
+    },
+
+    "pastStays": [],
+
+    "preferences": {
+      "room": {
+        "deskCleared": true,
+        "monitorAvailable": true,
+        "blackoutCurtainsEngaged": true
+      },
+      "dining": {
+        "allergies": ["tree nuts (severe — EpiPen on file via Temasek corporate)", "gluten (celiac, medical)"],
+        "behavioralPattern": "Stated at booking — celiac + tree nut anaphylaxis. Travel concierge flagged in PNR."
+      },
+      "communication": {
+        "preferredChannel": "WhatsApp",
+        "whatsappOptIn": true,
+        "smsOptIn": false
+      }
+    },
+
+    "interests": ["venture capital", "long-distance running", "specialty coffee"],
+
+    "signals": [
+      {
+        "signal": "business_silent_convenience",
+        "confidence": 0.94,
+        "sensitivity": "actionable",
+        "source": "Corporate rate (Temasek), 2-night stay, arrival 8:45pm, no partner on booking, purpose='investor meetings'. Pattern: high-velocity business traveler.",
+        "action": "Silent convenience mode. Skip 5-minute room tour. Hand keys at door. No butler unpacking offer. Steamer pre-staged outside closet (visible, not deployed). Surface expedited pressing via iPad menu, not verbally."
+      },
+      {
+        "signal": "climate_shock",
+        "confidence": 0.99,
+        "sensitivity": "actionable",
+        "source": "Origin Singapore (May avg 88°F humid). Destination Menlo Park evening (52°F). Delta: 36°F. Exceeds Sartorial Rescue threshold (30°F).",
+        "action": "Pre-stage loaner cashmere wrap + lightweight windbreaker (size M, neutral) on bench at foot of bed. Smart humidifier engaged. Welcome note mentions weather (factual, not presumptuous): 'Cool evening tonight — wrap on the bench is yours for the stay.'"
+      },
+      {
+        "signal": "international_tech_gap",
+        "confidence": 0.99,
+        "sensitivity": "actionable",
+        "source": "Origin Singapore → Type G plug. US property → Type A/B outlets.",
+        "action": "Two Type-G-to-US adapters pre-plugged into bedside + desk outlets. Complimentary eSIM QR code on desk with one-line instruction card. WhatsApp confirmed as preferred channel."
+      },
+      {
+        "signal": "celiac_anaphylaxis_safety",
+        "confidence": 1.0,
+        "sensitivity": "actionable_and_communicate",
+        "source": "Stated at booking. EpiPen flagged in PNR by Temasek travel desk.",
+        "action": "Clear minibar of all gluten + tree nut items (replace with dedicated sealed selection). Brief all F&B + housekeeping touchpoints. Flag dedicated chef contact for in-room dining. This is the ONE signal the host SHOULD verbally confirm at check-in: 'We've prepared your room with your dietary safety in mind — your in-room dining contact is Chef Andrea directly, her line is on the desk card.'"
+      }
+    ],
+
+    "doNotMention": [
+      "Do not say 'we noticed you're traveling alone' — corporate solo business is the norm, not a vulnerability.",
+      "Do not offer spa services unprompted — 2-night business trip, no signal of leisure intent.",
+      "Do not call her phone — WhatsApp confirmed at booking. SMS is opt-out.",
+      "Do not present the wrap as 'because you're from a hot country' — frame it as 'cool evening tonight.'"
+    ],
+
+    "techProfile": {
+      "plugType": "Type G (Singapore)",
+      "preferredMessaging": "WhatsApp",
+      "esimNeeded": true
+    }
+  },
+  {
+    "guestId": "g_park",
+    "salutation": "Mr.",
+    "firstName": "Daniel",
+    "lastName": "Park",
+    "originCity": "Vancouver",
+    "originCountry": "Canada",
+    "languages": ["English", "Korean"],
+    "primaryLanguage": "English",
+    "loyaltyTier": "Explorer",
+    "stayCount": 1,
+
+    "currentReservation": {
+      "reservationId": "r_park_20260517",
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-17",
+      "checkOut": "2026-05-21",
+      "roomCategory": "Family Manor Suite (connecting)",
+      "rateCode": "BAR-LEISURE",
+      "flightNumber": "AC566",
+      "originAirport": "YVR",
+      "destinationAirport": "SFO",
+      "scheduledArrival": "2026-05-17T14:20:00-07:00",
+      "partySize": 4,
+      "partyComposition": [
+        { "role": "primary", "name": "Daniel Park" },
+        { "role": "partner", "name": "Sarah Park" },
+        { "role": "child", "name": "Henry Park", "ageYears": 7 },
+        { "role": "child", "name": "Olive Park", "ageYears": 4 }
+      ],
+      "guestNotes": "Booking note from guest: 'Henry turns 8 on May 19 — would love any small thoughtful touch but no big fuss please.'"
+    },
+
+    "pastStays": [
+      {
+        "stayId": "ps_park_001",
+        "property": "Rosewood Sand Hill",
+        "dates": "2025-04-10 to 2025-04-14",
+        "hostStaffId": "s_devon",
+        "notes": "Family of 4 (kids were 6 and 3 at the time). Requested early dinner seating (6pm) every night — kids' bedtime. Sarah did 7am yoga on the lawn three of four mornings. Henry asked Devon detailed questions about local birds; Devon brought him a Sibley field guide on Day 3 — huge hit. Family ate vegetarian. Olive's stuffed rabbit 'Mochi' was left behind in linens; couriered to Vancouver Day 5."
+      }
+    ],
+
+    "preferences": {
+      "room": {
+        "connectingSuites": true,
+        "blackoutInChildrensRoom": true,
+        "childSafeOutletCovers": true,
+        "noMinibarInChildrensRoom": true
+      },
+      "dining": {
+        "behavioralPattern": "Family is vegetarian. Early dinner seating (6:00–6:30pm). Olive eats plain — pasta with butter, fruit. Henry adventurous — ordered the mushroom risotto last stay.",
+        "kidsMenuPreference": "real_plates_not_kids_menu"
+      },
+      "communication": {
+        "preferredChannel": "email",
+        "whatsappOptIn": true,
+        "smsOptIn": true
+      }
+    },
+
+    "interests": ["yoga", "hiking with kids", "birdwatching", "spa"],
+
+    "signals": [
+      {
+        "signal": "host_continuity",
+        "confidence": 0.93,
+        "sensitivity": "actionable",
+        "source": "s_devon hosted family April 2025. Built rapport with Henry (Sibley field guide). Sarah specifically thanked Devon by name in post-stay survey.",
+        "action": "Assign s_devon as primary host. Brief on Henry's birding interest and the field guide moment."
+      },
+      {
+        "signal": "henry_birthday_explicit",
+        "confidence": 1.0,
+        "sensitivity": "actionable_low_key",
+        "source": "Booking note from Daniel: 'Henry turns 8 on May 19 — small thoughtful touch but no big fuss.'",
+        "action": "Day-of touches: hand-illustrated card from Devon referencing birds, single slice of chocolate cake at the table at dinner (no song, no parade), a small Sibley pocket guide upgrade or a pair of kid-sized binoculars staged on his pillow morning-of. NO public lobby celebration. NO 'happy birthday' chorus from staff. This was the explicit ask."
+      },
+      {
+        "signal": "young_children_present",
+        "confidence": 1.0,
+        "sensitivity": "actionable",
+        "source": "Party composition: ages 7 and 4.",
+        "action": "Child-safe outlet covers in connecting suite. Minibar in children's room cleared of all alcohol + glass. Rosewood Explorers scavenger hunt passport on Olive's pillow. Two stuffed plush animals (rabbit + bear) on beds — note: Olive's rabbit 'Mochi' from last stay is in our lost-and-found archive; consider reuniting if appropriate (verify with housekeeping first)."
+      },
+      {
+        "signal": "wellness_morning_pacing",
+        "confidence": 0.86,
+        "sensitivity": "manifest_dont_announce",
+        "source": "Sarah did 7am lawn yoga 3/4 mornings last stay.",
+        "action": "Pre-stage one rolled yoga mat + a folded towel on the suite balcony. Lawn yoga class schedule on bedside card. Do not say 'we remember you did yoga last time.'"
+      }
+    ],
+
+    "doNotMention": [
+      "Do not stage a public birthday celebration for Henry — guest explicitly asked for understated.",
+      "Do not say 'we remember Olive's rabbit Mochi' — if reuniting the stuffed animal, present it neutrally as 'we believe this may belong to your daughter.'",
+      "Do not say 'we noticed Sarah does yoga' — the mat on the balcony says it.",
+      "Do not push spa upsells in front of the kids — surface spa options to Sarah's email only."
+    ],
+
+    "techProfile": {
+      "plugType": "Type A/B (Canada — no adapter needed)",
+      "preferredMessaging": "email + WhatsApp",
+      "esimNeeded": false
+    }
+  }
+]
