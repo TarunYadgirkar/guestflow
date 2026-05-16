@@ -8,10 +8,29 @@
     "preferredLanguage": "Hindi",
     "languages": ["Hindi", "English"],
     "originProfile": {
+      "city": "Mumbai",
+      "region": "Maharashtra, India",
       "timezone": "Asia/Kolkata",
       "climateF": 95,
+      "humidity": "high",
+      "airport": "Bombay Aerodrome (BOM)",
       "plugType": "Type D",
+      "voltage": 230,
       "preferredTelecom": "WhatsApp"
+    },
+    "companion": {
+      "id": "c_priya",
+      "relationship": "spouse",
+      "firstName": "Priya",
+      "lastName": "Sharma",
+      "languages": ["Hindi", "English"],
+      "preferences": {
+        "dietary": ["vegetarian", "no onion", "no garlic"],
+        "water": "sparkling",
+        "allergies": ["nuts", "sesame"],
+        "wakeUpTime": "08:00",
+        "interests": ["jewelry design", "classical dance", "spa wellness"]
+      }
     },
     "preferences": {
       "water": "still",
@@ -21,7 +40,29 @@
       "quietRoom": true,
       "dietary": ["vegetarian", "no alcohol"],
       "wakeUpTime": "07:00",
-      "interests": ["contemporary art", "trail running", "meditation", "architecture"]
+      "interests": ["contemporary art", "trail running", "meditation", "architecture"],
+      "diningPreferences": {
+        "cuisines": ["Indian vegetarian", "Mediterranean", "contemporary fusion"],
+        "favoriteRestaurants": ["Dishoom", "Gymkhana", "The Tail End"],
+        "avoidance": ["overly spiced", "heavy cream sauces"]
+      },
+      "attire": {
+        "packingStyle": "minimalist luxury",
+        "formalWear": "business formal, traditional Indian dress for evenings",
+        "footwear": "loafers, running shoes, formal shoes",
+        "outerwear": "needs lightweight layer for climate shift"
+      }
+    },
+    "technologyProfile": {
+      "devices": [
+        { "type": "iPhone 15 Pro Max", "charger": "USB-C", "priority": "primary" },
+        { "type": "Apple Watch Series 9", "charger": "proprietary magnetic", "priority": "secondary" },
+        { "type": "iPad Pro 12.9", "charger": "USB-C", "priority": "work" },
+        { "type": "AirPods Pro", "charger": "Lightning (case)", "priority": "daily" }
+      ],
+      "requiredAdapters": ["USB-C multi-port", "international outlet adapter (Type A/C for return)"],
+      "workRequirements": "Fast WiFi (6GHz capable), video conferencing setup for morning calls to India timezone",
+      "smartHomeCompatibility": "HomeKit enabled devices preferred"
     },
     "stayHistory": [
       {
@@ -30,6 +71,10 @@
         "checkOut": "2024-11-18",
         "hostStaffId": "s_maria",
         "serviceNotes": "Requested turban stand in room. Preferred high-floor suite with eastern exposure for morning light. Brought personal meditation cushion. Wife Priya accompanied; she prefers sparkling water and has a nut allergy.",
+        "attireObserved": "Morning: athletic wear for running. Evening: formal Indian dress (kurta) for dinner. Smart casual business wear for gallery visits.",
+        "diningChoices": "Sought out Indian vegetarian fine dining. Priya visited spa for traditional massage twice.",
+        "activities": "Early morning runs in Hyde Park (6 days). Private yoga session with instructor. Visited Saatchi Gallery and Gagosian Gallery.",
+        "techUsage": "Used hotel's business center for video calls to Mumbai (6 AM–7 AM daily). Charged devices nightly.",
         "highlight": "Particularly moved by Maria's Hindi greeting and Diwali-themed welcome arrangement; left a personal note of thanks"
       },
       {
@@ -38,7 +83,11 @@
         "checkOut": "2025-03-08",
         "hostStaffId": "s_maria",
         "serviceNotes": "Strict vegetarian — no eggs. Requested yoga mat morning setup at 6 AM daily. Very private; explicitly asked for no turndown intrusion. Business meetings in room; required reliable AV setup.",
-        "highlight": "Arranged private dawn riverboat excursion; Mr. Singh wrote glowing review citing Maria by name"
+        "attireObserved": "Business casual for day meetings. Evening traditional wear. Priya wore lightweight linen throughout.",
+        "diningChoices": "Fine dining Indian vegetarian restaurant twice. Private room dining preferred.",
+        "activities": "Daily 6 AM yoga practice. Private Buddhist temple tour (half day). Business strategy meetings in suite.",
+        "techUsage": "Heavy Zoom usage (6–7 AM IST). Requested additional USB-C chargers. Used streaming for morning news briefing.",
+        "highlight": "Arranged private dawn riverboat excursion; Mr. Sharma wrote glowing review citing Maria by name"
       }
     ],
     "upcomingReservation": {
@@ -48,7 +97,11 @@
       "roomType": "Garden Suite",
       "partySize": 2,
       "flightNumber": "UA328",
-      "occasion": "Anniversary – 9 yrs"
+      "airline": "United Airlines",
+      "departureTime": "22:45 IST from Mumbai",
+      "estimatedArrival": "4:30 PM PT (next day)",
+      "occasion": "Anniversary – 9 yrs",
+      "specialRequests": "Request suite with view of garden and nature. Early check-in if available. Yoga mat and meditation space. Video conferencing capability for early morning India calls."
     },
     "signals": [
       {
@@ -68,7 +121,7 @@
       },
       {
         "kind": "weather",
-        "detail": "Departing Mumbai at 95°F; arriving Menlo Park at 58°F — 37°F climate drop detected.",
+        "detail": "Departing Mumbai at 95°F; arriving Menlo Park at 58°F — 37°F climate drop detected. Needs lightweight layering options.",
         "sensitivity": "low"
       }
     ]
@@ -82,9 +135,14 @@
     "preferredLanguage": "Mandarin",
     "languages": ["Mandarin", "English", "Cantonese"],
     "originProfile": {
+      "city": "Shanghai",
+      "region": "Shanghai, China",
       "timezone": "Asia/Shanghai",
       "climateF": 72,
+      "humidity": "moderate-high",
+      "airport": "Pudong International (PVG)",
       "plugType": "Type A",
+      "voltage": 220,
       "preferredTelecom": "WeChat"
     },
     "preferences": {
@@ -95,7 +153,30 @@
       "quietRoom": true,
       "dietary": ["pescatarian", "no MSG"],
       "wakeUpTime": "06:30",
-      "interests": ["contemporary Chinese art", "technology", "fine dining", "yoga"]
+      "interests": ["contemporary Chinese art", "technology", "fine dining", "yoga"],
+      "diningPreferences": {
+        "cuisines": ["contemporary Asian fusion", "fine dining", "Michelin-starred establishments"],
+        "favoriteRestaurants": ["Ultraviolet", "Din Tai Fung", "Jing"],
+        "avoidance": ["overly heavy", "excessive seasoning"]
+      },
+      "attire": {
+        "packingStyle": "luxury minimalist, designer pieces",
+        "formalWear": "elegant business attire, designer dresses for dining",
+        "footwear": "designer heels, minimal sneakers",
+        "outerwear": "light blazer"
+      }
+    },
+    "technologyProfile": {
+      "devices": [
+        { "type": "iPhone 15 Pro", "charger": "USB-C", "priority": "primary" },
+        { "type": "MacBook Pro 16-inch M3 Max", "charger": "USB-C 140W", "priority": "critical for work" },
+        { "type": "iPad Air", "charger": "USB-C", "priority": "reference" },
+        { "type": "Sony WH-1000XM5 headphones", "charger": "USB-C", "priority": "daily" },
+        { "type": "Ring light + tripod", "charger": "USB-C", "priority": "video calls" }
+      ],
+      "requiredAdapters": ["USB-C 140W power delivery (MacBook)", "USB-C hub with HDMI", "Thunderbolt dock"],
+      "workRequirements": "Dual monitor setup capability (HDMI outputs). 10Gbps internet for large file transfers. Secure connection for board-level communications.",
+      "smartHomeCompatibility": "Prefers stable WiFi; brings personal laptop stand and ring light for professional appearance in video calls"
     },
     "stayHistory": [
       {
@@ -104,6 +185,10 @@
         "checkOut": "2024-09-24",
         "hostStaffId": "s_sophia",
         "serviceNotes": "Board-level tech executive. Required secure conference room with NDA protocols. Preferred minimal staff interaction — privacy paramount. All communication via WeChat only.",
+        "attireObserved": "Business formal every day. Luxury designer brands (Hermès, Gucci, Prada). Evening: designer cocktail dresses.",
+        "diningChoices": "Two Michelin-starred restaurant visits. Private dining room for meetings.",
+        "activities": "Art gallery tour (contemporary Chinese). Business meetings morning and afternoon. Private yoga class evening.",
+        "techUsage": "Brought personal equipment. Worked on MacBook 8+ hours daily. Multiple Zoom calls to international board members.",
         "highlight": "Impressed by curated contemporary art walk through the Tai Kwun cultural quarter; requested Sophia for future stays"
       },
       {
@@ -112,6 +197,10 @@
         "checkOut": "2025-06-13",
         "hostStaffId": "s_sophia",
         "serviceNotes": "Brought personal laptop stand and ring light for video calls. Prefers white noise machine. Enjoyed private tea ceremony arranged by host.",
+        "attireObserved": "Business casual for day (premium denim with blazer). Evening formal for dining.",
+        "diningChoices": "Contemporary Chinese fine dining. Private chef experience.",
+        "activities": "Morning yoga (6:30 AM). Art museum visit. Afternoon strategy sessions. Evening cultural event (Peking Opera).",
+        "techUsage": "Extended work hours (7 AM–9 PM with video calls to US and Europe). Requested white noise machine during sleep.",
         "highlight": "Specifically requested Sophia Santos as primary contact for all future Rosewood stays"
       }
     ],
@@ -122,7 +211,11 @@
       "roomType": "Deluxe King",
       "partySize": 1,
       "flightNumber": "CX870",
-      "occasion": "business"
+      "airline": "Cathay Pacific",
+      "departureTime": "02:00 HKT from Hong Kong",
+      "estimatedArrival": "02:15 PM CST (same day)",
+      "occasion": "business",
+      "specialRequests": "Secure WiFi for confidential board calls. Dual monitor setup (HDMI). Ring light and stable table for video. Do not disturb between 8 AM–6 PM unless emergency. All communication via WeChat."
     },
     "signals": [
       {
@@ -134,6 +227,11 @@
         "kind": "calendar",
         "detail": "Linked calendar shows 'Board Prep — Confidential' blocking all three stay days from 8 AM–6 PM.",
         "sensitivity": "medium"
+      },
+      {
+        "kind": "tech",
+        "detail": "Executive role suggests significant work commitments. Prefers bring-your-own-device with hotel providing infrastructure only.",
+        "sensitivity": "low"
       }
     ]
   },
@@ -146,9 +244,14 @@
     "preferredLanguage": "Japanese",
     "languages": ["Japanese", "English"],
     "originProfile": {
+      "city": "Tokyo",
+      "region": "Tokyo, Japan",
       "timezone": "Asia/Tokyo",
       "climateF": 68,
+      "humidity": "moderate",
+      "airport": "Narita International (NRT)",
       "plugType": "Type A",
+      "voltage": 100,
       "preferredTelecom": "iMessage"
     },
     "preferences": {
@@ -159,7 +262,28 @@
       "quietRoom": true,
       "dietary": ["gluten-free"],
       "wakeUpTime": "05:30",
-      "interests": ["ceramics", "forest bathing", "ikebana", "sustainable fashion"]
+      "interests": ["ceramics", "forest bathing", "ikebana", "sustainable fashion"],
+      "diningPreferences": {
+        "cuisines": ["Japanese traditional", "plant-based", "artisanal"],
+        "favoriteRestaurants": ["Nabezo", "Sushi Yoshitake", "Kanda"],
+        "avoidance": ["overly heavy", "gluten-containing sauces"]
+      },
+      "attire": {
+        "packingStyle": "minimalist, sustainable, high-quality basics",
+        "formalWear": "traditional Japanese dress (kimono) for special occasions",
+        "footwear": "comfortable walking shoes, tabi socks",
+        "outerwear": "natural fiber cardigan or linen jacket"
+      }
+    },
+    "technologyProfile": {
+      "devices": [
+        { "type": "iPhone 15", "charger": "USB-C", "priority": "primary" },
+        { "type": "iPad Mini", "charger": "USB-C", "priority": "reading/sketching" },
+        { "type": "Sony A6400 camera", "charger": "proprietary Sony battery", "priority": "photography" }
+      ],
+      "requiredAdapters": ["USB-C adapter for iPhone/iPad", "Sony battery charger", "voltage converter 100V→240V for camera equipment"],
+      "workRequirements": "Minimal connectivity preferred. WiFi available but not required for work.",
+      "smartHomeCompatibility": "No smart home devices; prefers analog experience and silence"
     },
     "stayHistory": [
       {
@@ -168,6 +292,10 @@
         "checkOut": "2025-04-04",
         "hostStaffId": "s_riku",
         "serviceNotes": "Celebrated publication of first book — ceramic-influenced poetry collection. Quiet, introspective traveler. Requested garden-view room. No alcohol; loves matcha. Meditative pace throughout.",
+        "attireObserved": "Simple, elegant Japanese-inspired clothing. Neutral earth tones. Traditional dress for evening. Comfortable walking shoes.",
+        "diningChoices": "Vegetable-focused kaiseki dinner. Matcha and pastry at local cafe daily. No formal meals — preferred simple, mindful eating.",
+        "activities": "5:30 AM forest walks (daily). Visited local ceramic studios. Ikebana arrangement workshop. Photography of gardens and architecture.",
+        "techUsage": "Minimal — phone used only for photography. No work-related device usage.",
         "highlight": "Deeply moved by hand-written welcome note in Japanese and the private matcha ceremony Riku arranged"
       }
     ],
@@ -178,7 +306,11 @@
       "roomType": "Garden View Room",
       "partySize": 1,
       "flightNumber": "JL068",
-      "occasion": null
+      "airline": "Japan Airlines",
+      "departureTime": "08:00 JST from Narita",
+      "estimatedArrival": "11:45 AM PST (same day)",
+      "occasion": null,
+      "specialRequests": "Garden or nature view room. Quiet location. Minimal housekeeping (exception: fresh flowers daily). Access to morning forest walks or nature paths. Tea ceremony or traditional artisan experience. Photography opportunities. Vegetarian/gluten-free meals."
     },
     "signals": [
       {
@@ -188,7 +320,12 @@
       },
       {
         "kind": "weather",
-        "detail": "Departing Tokyo at 68°F; arriving Menlo Park at 58°F — 10°F drop, below Sartorial Rescue threshold.",
+        "detail": "Departing Tokyo at 68°F; arriving Miyakojima at similar climate. Light clothing sufficient.",
+        "sensitivity": "low"
+      },
+      {
+        "kind": "lifestyle",
+        "detail": "Published poet and ceramic artist. Values introspection, mindfulness, and authentic cultural experiences over convenience.",
         "sensitivity": "low"
       }
     ]
@@ -202,9 +339,14 @@
     "preferredLanguage": "Spanish",
     "languages": ["Spanish", "English", "Portuguese"],
     "originProfile": {
+      "city": "Mexico City",
+      "region": "Mexico City, Mexico",
       "timezone": "America/Mexico_City",
       "climateF": 82,
+      "humidity": "moderate",
+      "airport": "Mexico City International (MEX)",
       "plugType": "Type A",
+      "voltage": 127,
       "preferredTelecom": "WhatsApp"
     },
     "preferences": {
@@ -215,7 +357,30 @@
       "quietRoom": false,
       "dietary": ["no shellfish"],
       "wakeUpTime": null,
-      "interests": ["craft cocktails", "live music", "architecture", "cycling"]
+      "interests": ["craft cocktails", "live music", "architecture", "cycling"],
+      "diningPreferences": {
+        "cuisines": ["Spanish tapas", "contemporary Latin American", "farm-to-table", "craft cocktail bars"],
+        "favoriteRestaurants": ["Boca", "Corazón de Maguey", "Quintonil"],
+        "avoidance": ["heavy sauces", "no fine wine pairings"],
+        "specialtyDrinks": "Mezcal, tequila, craft cocktails with premium spirits"
+      },
+      "attire": {
+        "packingStyle": "fashion-forward, designer casual",
+        "formalWear": "smart casual, designer blazers",
+        "footwear": "designer sneakers, loafers, cycling shoes",
+        "outerwear": "not needed (warm climate origin)"
+      }
+    },
+    "technologyProfile": {
+      "devices": [
+        { "type": "iPhone 15 Pro", "charger": "USB-C", "priority": "primary" },
+        { "type": "Apple Watch Ultra", "charger": "USB-C", "priority": "fitness tracking for cycling" },
+        { "type": "AirPods Max", "charger": "USB-C", "priority": "music/calls" },
+        { "type": "GoPro Hero 12", "charger": "USB-C", "priority": "cycling videos" }
+      ],
+      "requiredAdapters": ["USB-C multi-port", "voltage adapter 127V→120V"],
+      "workRequirements": "Reliable WiFi for video calls to portfolio companies (morning meetings). Bluetooth connectivity for fitness tracking.",
+      "smartHomeCompatibility": "HomeKit and Siri voice commands for smart lighting and entertainment"
     },
     "stayHistory": [
       {
@@ -224,6 +389,10 @@
         "checkOut": "2025-01-18",
         "hostStaffId": "s_james",
         "serviceNotes": "Venture capitalist hosting portfolio company dinners nightly. Prefers lively, social energy. Excellent wine knowledge — skip elementary pairings. Loves mezcal; arranges his own tequila tastings.",
+        "attireObserved": "Smart casual daily (designer brands, tailored). Evening: elevated casual for dinners (blazer, premium denim).",
+        "diningChoices": "Three private dinners hosted. High-end mezcal bar visits. Contemporary Latin American fine dining twice.",
+        "activities": "Morning cycling rides (5 days, 1.5–2 hours each). Evening social dinners and drinks. Live music venue visit.",
+        "techUsage": "Used hotel business center for VC calls. Video conferencing with portfolio founders. Shared GoPro footage of cycling routes.",
         "highlight": "Raved about curated mezcal flight arranged by James; invited him to guest-lecture at a portfolio founder dinner"
       }
     ],
@@ -234,7 +403,11 @@
       "roomType": "Deluxe King",
       "partySize": 1,
       "flightNumber": "AM696",
-      "occasion": "business"
+      "airline": "Aeromexico",
+      "departureTime": "09:30 CDT from Mexico City",
+      "estimatedArrival": "12:45 PM PT (same day)",
+      "occasion": "business",
+      "specialRequests": "High-floor room. Late dinner reservations at premium restaurants (farm-to-table preferred). Bicycle rental for morning rides. Craft cocktail bar recommendations. Portfolio company dinner venue coordination assistance. Early evening social hours flexibility."
     },
     "signals": [
       {
@@ -245,6 +418,11 @@
       {
         "kind": "calendar",
         "detail": "Two dinner bookings already confirmed via concierge; pre-stay request for best craft cocktail bar in the Peninsula.",
+        "sensitivity": "low"
+      },
+      {
+        "kind": "lifestyle",
+        "detail": "Active, social traveler. Values experiences over rest. Early risers (cycling), late nights (social dining).",
         "sensitivity": "low"
       }
     ]

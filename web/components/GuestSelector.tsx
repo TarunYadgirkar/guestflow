@@ -144,43 +144,77 @@ const PROPERTY_GUEST_MAP: Record<string, string[]> = {
   'rsw-miyakojima': ['g_yuki'],
 };
 
-// Generate AI summary of guest data
+// Generate comprehensive AI summary of guest data
 function generateGuestSummary(data: Record<string, unknown>): string {
-  const prefs = data.preferences as Record<string, unknown>;
-  const origin = data.originProfile as Record<string, unknown>;
-  const langs = data.languages as string[];
+  const prefs = data.preferences as Record<string, unknown> | undefined;
+  const origin = data.originProfile as Record<string, unknown> | undefined;
+  const langs = data.languages as string[] | undefined;
   const dietary = prefs?.dietary as string[] | undefined;
   const interests = prefs?.interests as string[] | undefined;
   const history = data.stayHistory as Array<Record<string, unknown>> | undefined;
+  const companion = data.companion as Record<string, unknown> | undefined;
+  const tech = data.technologyProfile as Record<string, unknown> | undefined;
+  const diningPrefs = prefs?.diningPreferences as Record<string, unknown> | undefined;
+  const attire = prefs?.attire as Record<string, unknown> | undefined;
 
   const parts: string[] = [];
 
-  if (langs?.length > 1) {
-    parts.push(`Native speaker of ${langs[0]} with English fluency`);
+  // Origin location
+  if (origin?.city && origin?.region) {
+    const city = origin.city as string;
+    const climateF = origin.climateF as number;
+    parts.push(`Traveling from ${city} (${climateF}°F climate)`);
   }
 
+  // Companion info
+  if (companion?.firstName) {
+    const compName = companion.firstName as string;
+    const compRel = companion.relationship as string;
+    parts.push(`Coming with ${compRel}: ${compName}`);
+  }
+
+  // Language & communication
+  if (langs?.length) {
+    parts.push(`Languages: ${langs.join('/')}`);
+  }
+
+  // Dietary & allergies
   if (dietary?.length) {
-    parts.push(`Dietary preferences: ${dietary.join(', ')}`);
+    const dietary_str = dietary.join(', ');
+    const compAllergies = companion?.preferences ? (companion.preferences as Record<string, unknown>).allergies as string[] | undefined : undefined;
+    if (compAllergies?.length) {
+      parts.push(`Dietary: ${dietary_str}. Companion has ${compAllergies.join(', ')} allergies`);
+    } else {
+      parts.push(`Dietary: ${dietary_str}`);
+    }
   }
 
-  if (prefs?.wakeUpTime) {
-    parts.push(`Early riser (${prefs.wakeUpTime} wake preference)`);
+  // Dining style
+  if (diningPrefs?.cuisines) {
+    const cuisines = diningPrefs.cuisines as string[];
+    parts.push(`Enjoys: ${cuisines.slice(0, 2).join(', ')}`);
   }
 
-  if (prefs?.roomTempF) {
-    parts.push(`Comfort temp: ${prefs.roomTempF}°F`);
+  // Attire & packing
+  if (attire?.packingStyle) {
+    parts.push(`Style: ${attire.packingStyle}`);
   }
 
-  if (origin?.climateF) {
-    parts.push(`Arriving from ${origin.climateF}°F climate`);
+  // Technology & charging
+  if (tech?.devices) {
+    const devices = tech.devices as Array<Record<string, unknown>>;
+    const chargerTypes = [...new Set(devices.map(d => d.charger))].join('/');
+    parts.push(`Tech: Needs ${chargerTypes} chargers`);
   }
 
-  if (history?.length) {
-    parts.push(`${history.length} previous stays on file`);
-  }
-
+  // Activity patterns
   if (interests?.length) {
     parts.push(`Interests: ${interests.slice(0, 2).join(', ')}`);
+  }
+
+  // Previous stay count
+  if (history?.length) {
+    parts.push(`${history.length} previous stay${history.length > 1 ? 's' : ''} on record`);
   }
 
   return parts.join(' • ');
@@ -280,7 +314,7 @@ export default function GuestSelector({ selectedGuestId, onSelect, propertyId, d
               </div>
 
               {/* Toggleable Raw JSON */}
-              <Collapsible title="View Raw Guest Data (JSON)" defaultOpen={false}>
+              <Collapsible title="View All Data the AI Interprets (JSON)" defaultOpen={false}>
                 <pre style={{
                   backgroundColor: '#F5F5F5',
                   padding: '12px',
