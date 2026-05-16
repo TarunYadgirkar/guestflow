@@ -2,7 +2,6 @@
   "name": "guestflow",
   "version": "1.0.0",
   "description": "GuestFlow — Hyper-Personalized Arrival Orchestration",
-  "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run api\" \"vite --config config/vite.config.ts\"",
     "api": "tsx api/server.ts",
