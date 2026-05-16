@@ -20,7 +20,7 @@
 > "His reservation arrives. We hit Orchestrate." *(click — the reasoning trace streams live)*
 
 **[0:25–0:50] Watch it think, then the artifacts.**
-> "It's pulling his history, checking flight UA328 — delayed 4 hours — reading the local programming around Sand Hill, and drawing one line most systems never do." *(four panels render)* "His room: 65°, Jetlag Recovery lighting, and a welcome amenity of bone broth and tea — because his 2 AM arrival triggered our Dynamic Empathy protocol."
+> "It's pulling his history, checking flight UA328 — delayed 4 hours — reading the local programming around Sand Hill, and drawing one line most systems never do." *(four panels render)* "His room: 65°, Jetlag Recovery lighting, and a welcome amenity of vegetable broth and herbal tea — because his 2 AM arrival triggered our Dynamic Empathy protocol, respecting his vegetarian preference."
 
 **[0:50–1:05] The human layer (continuity & language).**
 > "It doesn't hand this to a screen. It assigns Maria — who hosted him in London last year and speaks fluent Hindi — and gives her a brief. It even generates his itinerary in side-by-side Hindi and English via our Language Lens, ensuring he feels known, not just processed."

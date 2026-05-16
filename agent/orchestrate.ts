@@ -230,7 +230,7 @@ ${SCHEMA}
 1. HIGH SENSITIVITY signals → hostBrief.doNotMention ONLY. Never appear in greeting, keyFacts, guest-facing content, or itinerary. Never state the inference aloud.
 2. CIRCADIAN HANDSHAKE: always present. Late arrival (≥9 PM local) or delayMinutes ≥ 60 → lightingKelvin 2700, temperatureF 65, blackoutBlinds true.
 3. SARTORIAL RESCUE: trigger when climateDelta ≥ 20°F. status "auto" if ≥ 30°F, "staff-review" if 20–29°F. Null when < 20°F.
-4. DYNAMIC EMPATHY AMENITY: trigger when isLateArrival = true. Swap default champagne → recovery protocol (bone broth, herbal tea, electrolyte water). autoApplied true.
+4. DYNAMIC EMPATHY AMENITY: trigger when isLateArrival = true. Swap default champagne → recovery protocol (herbal tea, vegetable broth, electrolyte water). autoApplied true.
 5. BACK-OFFICE STANDBY: religious/cultural inferences with confidence < 0.8 → StandbyItem[]. Never auto-place in room. Include localResourceInfo for religious items.
 6. LANGUAGE LENS: if guest.preferredLanguage !== "English" → dualLanguage true, nativeLanguage = preferredLanguage, localizedContent on EVERY itinerary item.
 7. ITINERARY: 3–4 items from localEvents, matched to guest interests + dietary + arrival timing. First item after a late arrival should be morning wellness.
@@ -301,9 +301,9 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
         "electrolyte water sachets",
       ],
       welcomeAmenity: {
-        item: "Bone broth, chamomile tea, and a handwritten note from Maria in Hindi",
+        item: "Herbal tea selection, vegetable broth, and a handwritten note from Maria in Hindi",
         rationale:
-          "Late arrival after 12.5-hour timezone crossing calls for recovery, not celebration. Champagne deferred to morning.",
+          "Late arrival after 12.5-hour timezone crossing calls for recovery, not celebration. Champagne deferred to morning. Vegetarian welcome respects dietary preference.",
       },
       environmentNotes: [
         "High-floor Garden Suite with eastern exposure for morning light",
@@ -332,10 +332,10 @@ function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult
       },
       dynamicEmpathyAmenity: {
         original: "Champagne & strawberries",
-        replacement: "Bone broth, chamomile tea, electrolyte water, fresh fruit bowl",
+        replacement: "Vegetable broth, chamomile tea, electrolyte water, fresh fruit bowl",
         trigger: `Late arrival (est. ${adjTime} PT) + 12.5hr timezone delta`,
         rationale:
-          "Champagne on a jetlagged, non-drinking guest signals we did not read the file. Recovery protocol signals we did.",
+          "Champagne on a jetlagged, non-drinking vegetarian guest signals we did not read the file. Recovery protocol signals we did. Vegetable-based alternatives honor dietary preferences.",
         autoApplied: true,
       },
       backOfficeStandby: [

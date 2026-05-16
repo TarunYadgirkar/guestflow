@@ -78,10 +78,9 @@ interface GuestSelectorProps {
 
 // Map properties to guest IDs
 const PROPERTY_GUEST_MAP: Record<string, string[]> = {
-  'rsw-sandhill': ['g_tarun'],
+  'rsw-sandhill': ['g_tarun', 'g_carlos'],
   'rsw-beijing': ['g_mei'],
-  'rsw-kyoto': ['g_yuki'],
-  'rsw-mexicocity': ['g_carlos'],
+  'rsw-miyakojima': ['g_yuki'],
 };
 
 export default function GuestSelector({ selectedGuestId, onSelect, propertyId, disabled }: GuestSelectorProps) {
@@ -90,122 +89,73 @@ export default function GuestSelector({ selectedGuestId, onSelect, propertyId, d
 
   return (
     <section>
-      <h2
-        className="text-xs tracking-[0.2em] uppercase mb-5 font-sans"
-        style={{ color: 'var(--text-muted)' }}
-      >
-        Arriving Guests Today
+      <h2 className="text-2xl font-bold mb-8" style={{ color: 'var(--text)' }}>
+        Select Guest for Arrival Planning
       </h2>
       {arrivingGuests.length === 0 ? (
-        <p style={{ color: 'var(--text-muted)' }} className="text-sm">
+        <p style={{ color: 'var(--text-muted)' }} className="text-lg">
           No guests arriving today at this property.
         </p>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {arrivingGuests.map(guest => {
-          const isSelected = selectedGuestId === guest.id;
-          return (
-            <button
-              key={guest.id}
-              onClick={() => !disabled && onSelect(guest.id)}
-              disabled={disabled}
-              className="relative text-left p-4 rounded-xl border transition-all duration-200"
-              style={{
-                borderColor: isSelected ? 'var(--discovery-green)' : 'var(--border)',
-                backgroundColor: isSelected ? 'var(--discovery-green)' : 'var(--surface)',
-                boxShadow: isSelected ? '0 4px 20px rgba(11,94,64,0.15)' : '0 1px 3px rgba(0,0,0,0.04)',
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                opacity: disabled && !isSelected ? 0.6 : 1,
-              }}
-            >
-              {/* Header: flag + tier */}
-              <div className="flex items-center justify-between mb-2.5">
-                <span className="text-lg">{guest.flag}</span>
-                <span
-                  className="text-xs font-medium tracking-wide"
-                  style={{ color: isSelected ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}
-                >
-                  {guest.tier}
-                </span>
-              </div>
-
-              {/* Name */}
-              <p
-                className="font-serif text-lg font-light leading-tight"
-                style={{ color: isSelected ? '#FFFFFF' : 'var(--text-primary)' }}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {arrivingGuests.map((guest, idx) => {
+            const isSelected = selectedGuestId === guest.id;
+            return (
+              <button
+                key={guest.id}
+                onClick={() => !disabled && onSelect(guest.id)}
+                disabled={disabled}
+                className="reveal text-left transition-all duration-500"
+                style={{
+                  background: isSelected ? 'var(--accent)' : '#F5F5F5',
+                  border: `3px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
+                  borderRadius: '0',
+                  padding: '28px 24px',
+                  cursor: disabled ? 'not-allowed' : 'pointer',
+                  opacity: disabled && !isSelected ? 0.5 : 1,
+                  animationDelay: `${idx * 100}ms`,
+                }}
               >
-                {guest.title} {guest.name}
-              </p>
-
-              {/* Trip purpose (primary info) */}
-              <p
-                className="text-xs mt-1.5 mb-2.5"
-                style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : 'var(--accent)' }}
-              >
-                {guest.tripPurpose}
-              </p>
-
-              {/* Languages + restrictions (compact) */}
-              <div className="space-y-0.5 text-xs mb-3" style={{ color: isSelected ? 'rgba(255,255,255,0.7)' : 'var(--text-secondary)' }}>
-                <p>Languages: {guest.languages}</p>
-                <p>Restrictions: {guest.restrictions}</p>
-              </div>
-
-              {/* Status badges (bottom) */}
-              <div className="flex flex-wrap gap-1">
-                {/* Itinerary status */}
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
+                {/* Guest name - Primary */}
+                <h3
+                  className="mb-3 font-bold text-xl"
                   style={{
-                    backgroundColor: isSelected ? 'rgba(255,255,255,0.15)' :
-                      guest.itineraryStatus === 'confirmed' ? 'var(--success-bg)' :
-                      guest.itineraryStatus === 'requested' ? 'var(--pivot-bg)' :
-                      'var(--surface-alt)',
-                    color: isSelected ? 'rgba(255,255,255,0.8)' :
-                      guest.itineraryStatus === 'confirmed' ? 'var(--success)' :
-                      guest.itineraryStatus === 'requested' ? 'var(--pivot)' :
-                      'var(--text-muted)',
+                    color: isSelected ? 'white' : 'var(--text)',
                   }}
                 >
-                  {guest.itineraryStatus === 'confirmed' ? '✓ Itinerary' :
-                   guest.itineraryStatus === 'requested' ? '○ Itinerary' :
-                   '✗ No itinerary'}
-                </span>
+                  {guest.title} {guest.name}
+                </h3>
 
-                {/* Host assignment */}
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: isSelected ? 'rgba(255,255,255,0.15)' : guest.assignedHost ? 'var(--surface-alt)' : 'var(--surface-alt)',
-                    color: isSelected ? 'rgba(255,255,255,0.8)' : guest.assignedHost ? 'var(--accent)' : 'var(--text-muted)',
-                  }}
-                >
-                  {guest.assignedHost ? `👤 ${guest.assignedHost.split(' ')[0]}` : '👤 Unassigned'}
-                </span>
+                {/* Tier + Trip purpose */}
+                <p className="text-sm mb-4" style={{ color: isSelected ? 'rgba(255,255,255,0.9)' : 'var(--text-muted)' }}>
+                  <strong>{guest.tier}</strong> • {guest.tripPurpose}
+                </p>
 
-                {/* Elite advisor */}
-                {guest.eliteAdvisor && (
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full"
-                    style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.15)' : 'rgba(156,125,90,0.1)',
-                      color: isSelected ? 'rgba(255,255,255,0.8)' : 'var(--accent)',
-                    }}
-                  >
-                    ✦ Elite advisor
-                  </span>
-                )}
-              </div>
+                {/* Languages - Highlight matching in green */}
+                <p className="text-sm mb-2" style={{ color: isSelected ? 'rgba(255,255,255,0.9)' : 'var(--text)' }}>
+                  {guest.languages.includes('English') && <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Speaks English • </span>}
+                  {guest.languages}
+                </p>
 
-              {isSelected && (
-                <div className="absolute top-3 right-3">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#FAFBF6" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
+                {/* Restrictions */}
+                <p className="text-sm mb-4" style={{ color: isSelected ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)' }}>
+                  {guest.restrictions}
+                </p>
+
+                {/* Status quick indicators */}
+                <div className="flex gap-2 text-xs font-semibold">
+                  {guest.itineraryStatus === 'confirmed' && (
+                    <span style={{ color: isSelected ? 'white' : 'var(--accent)' }}>✓ Itinerary</span>
+                  )}
+                  {guest.assignedHost && (
+                    <span style={{ color: isSelected ? 'white' : 'var(--text-muted)' }}>👤 {guest.assignedHost.split(' ')[0]}</span>
+                  )}
+                  {guest.eliteAdvisor && (
+                    <span style={{ color: isSelected ? 'white' : 'var(--accent)', fontWeight: 'bold' }}>★ Elite</span>
+                  )}
                 </div>
-              )}
-            </button>
-          );
+              </button>
+            );
           })}
         </div>
       )}

@@ -7,6 +7,8 @@ export interface RosewoodProperty {
   region: string;
   timezone: string;
   country: string;
+  comingSoon?: boolean;
+  openYear?: number;
 }
 
 export const ROSEWOOD_PROPERTIES: RosewoodProperty[] = [
@@ -51,20 +53,30 @@ export const ROSEWOOD_PROPERTIES: RosewoodProperty[] = [
     country: 'China',
   },
   {
+    id: 'rsw-miyakojima',
+    name: 'Rosewood Miyakojima',
+    location: 'Miyako Island, Okinawa, Japan',
+    region: 'Asia Pacific',
+    timezone: 'Asia/Tokyo',
+    country: 'Japan',
+  },
+  {
+    id: 'rsw-paris',
+    name: 'Hôtel de Crillon, A Rosewood Hotel',
+    location: 'Paris, France',
+    region: 'Europe',
+    timezone: 'Europe/Paris',
+    country: 'France',
+  },
+  {
     id: 'rsw-mexicocity',
     name: 'Rosewood Mexico City',
     location: 'Mexico City, Mexico',
     region: 'Latin America',
     timezone: 'America/Mexico_City',
     country: 'Mexico',
-  },
-  {
-    id: 'rsw-kyoto',
-    name: 'Rosewood Kyoto',
-    location: 'Kyoto, Japan',
-    region: 'Asia Pacific',
-    timezone: 'Asia/Tokyo',
-    country: 'Japan',
+    comingSoon: true,
+    openYear: 2027,
   },
   {
     id: 'rsw-dubai',
@@ -73,22 +85,8 @@ export const ROSEWOOD_PROPERTIES: RosewoodProperty[] = [
     region: 'Middle East',
     timezone: 'Asia/Dubai',
     country: 'United Arab Emirates',
-  },
-  {
-    id: 'rsw-sydney',
-    name: 'Rosewood Sydney',
-    location: 'Sydney, Australia',
-    region: 'Asia Pacific',
-    timezone: 'Australia/Sydney',
-    country: 'Australia',
-  },
-  {
-    id: 'rsw-paris',
-    name: 'Rosewood Paris',
-    location: 'Paris, France',
-    region: 'Europe',
-    timezone: 'Europe/Paris',
-    country: 'France',
+    comingSoon: true,
+    openYear: 2029,
   },
 ];
 
@@ -106,32 +104,35 @@ export default function PropertySelector({
   const selectedProperty = ROSEWOOD_PROPERTIES.find(p => p.id === selectedPropertyId);
 
   return (
-    <div className="flex items-center gap-3">
-      <label className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>
-        Property
+    <div className="flex flex-col gap-2">
+      <label className="label" style={{ color: 'var(--text-muted)' }}>
+        Select Property
       </label>
       <select
         value={selectedPropertyId}
         onChange={(e) => onSelect(e.target.value)}
         disabled={disabled}
-        className="px-4 py-2 rounded-lg border text-sm font-light"
+        className="w-full text-sm"
         style={{
-          borderColor: 'var(--border)',
-          backgroundColor: 'var(--surface)',
-          color: 'var(--text-primary)',
+          backgroundColor: 'transparent',
+          color: 'var(--text)',
+          borderBottom: '1px solid var(--border)',
+          borderRadius: 0,
+          padding: '12px 0',
           cursor: disabled ? 'not-allowed' : 'pointer',
+          opacity: disabled ? 0.5 : 1,
         }}
       >
         {ROSEWOOD_PROPERTIES.map(property => (
           <option key={property.id} value={property.id}>
-            {property.name} — {property.location}
+            {property.name}{property.comingSoon ? ` (Coming ${property.openYear})` : ''} — {property.location}
           </option>
         ))}
       </select>
 
       {selectedProperty && (
-        <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-          <span style={{ color: 'var(--discovery-green)', fontWeight: '500' }}>
+        <div className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
+          <span style={{ color: 'var(--accent)' }}>
             {selectedProperty.region}
           </span>
           {' • '}

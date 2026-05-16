@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import type { GuestItinerary, ItineraryItem } from '../../../shared/types';
+import type { GuestItinerary } from '../../../shared/types';
+import Collapsible from '../Collapsible';
 
 interface Props {
   itinerary: GuestItinerary;
@@ -7,138 +8,76 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-const TYPE_ICONS: Record<ItineraryItem['type'], string> = {
-  dining: '🍽',
-  cultural: '🎨',
-  wellness: '🧘',
-  excursion: '🌿',
-};
-
 export default function ItineraryPanel({ itinerary, className, style }: Props) {
-  const [lang, setLang] = useState<'native' | 'english'>('native');
-  const showNative = itinerary.dualLanguage && lang === 'native';
+  const [lang, setLang] = useState<'native' | 'english'>('english');
 
   return (
     <div
-      className={`rounded-xl border overflow-hidden ${className ?? ''}`}
-      style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)', ...style }}
+      className={`${className ?? ''}`}
+      style={{ borderTop: '3px solid var(--accent)', paddingTop: '16px', ...style }}
     >
-      {/* Header */}
-      <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-light)' }}>
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="font-serif text-xl font-light">Stay Plan & Bookings</h3>
-            <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Concierge-assembled itinerary</p>
-          </div>
+      {/* Header with Language Toggle */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>
+          Itinerary
+        </h2>
 
-          {/* Language Lens toggle */}
-          {itinerary.dualLanguage && (
-            <div className="text-right">
-              <div className="flex items-center gap-1.5 mt-1">
-                <span
-                  className="text-xs px-2 py-1 rounded-full cursor-pointer transition-all"
-                  onClick={() => setLang('native')}
-                  style={{
-                    backgroundColor: lang === 'native' ? 'var(--text-primary)' : 'var(--surface-alt)',
-                    color: lang === 'native' ? 'white' : 'var(--text-secondary)',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  {itinerary.nativeLanguage}
-                </span>
-                <span
-                  className="text-xs px-2 py-1 rounded-full cursor-pointer transition-all"
-                  onClick={() => setLang('english')}
-                  style={{
-                    backgroundColor: lang === 'english' ? 'var(--text-primary)' : 'var(--surface-alt)',
-                    color: lang === 'english' ? 'white' : 'var(--text-secondary)',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  English
-                </span>
-              </div>
-              <p className="text-xs mt-1" style={{ color: 'var(--accent)' }}>Language Lens active</p>
-            </div>
-          )}
-        </div>
+        {itinerary.dualLanguage && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLang('english')}
+              className="text-sm px-3 py-1"
+              style={{
+                backgroundColor: lang === 'english' ? 'var(--accent)' : 'transparent',
+                color: lang === 'english' ? 'white' : 'var(--accent)',
+                border: '1px solid var(--accent)',
+                fontWeight: lang === 'english' ? 'bold' : 'normal',
+                cursor: 'pointer',
+              }}
+            >
+              English
+            </button>
+            <button
+              onClick={() => setLang('native')}
+              className="text-sm px-3 py-1"
+              style={{
+                backgroundColor: lang === 'native' ? 'var(--accent)' : 'transparent',
+                color: lang === 'native' ? 'white' : 'var(--accent)',
+                border: '1px solid var(--accent)',
+                fontWeight: lang === 'native' ? 'bold' : 'normal',
+                cursor: 'pointer',
+              }}
+            >
+              {itinerary.nativeLanguage}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Items */}
-      <div className="p-6 space-y-4 overflow-y-auto" style={{ maxHeight: '520px' }}>
+      {/* Items as Bullets */}
+      <div className="space-y-3">
         {itinerary.items.map((item, i) => {
+          const showNative = itinerary.dualLanguage && lang === 'native';
           const title = showNative && item.localizedContent ? item.localizedContent.title : item.title;
           const description = showNative && item.localizedContent ? item.localizedContent.description : item.description;
 
           return (
-            <div
-              key={i}
-              className="pb-4 border-b last:border-b-0 last:pb-0"
-              style={{ borderColor: 'var(--border-light)' }}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-lg mt-0.5 flex-shrink-0">{TYPE_ICONS[item.type]}</span>
-                <div className="flex-1 min-w-0">
-                  {/* Title row */}
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-serif text-base font-medium leading-snug">{title}</p>
-                    <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
-                      <span
-                        className="text-xs px-1.5 py-0.5 rounded"
-                        style={{
-                          backgroundColor: item.status === 'auto' ? 'var(--success-bg)' : 'var(--pivot-bg)',
-                          color: item.status === 'auto' ? 'var(--success)' : 'var(--pivot)',
-                        }}
-                      >
-                        {item.status === 'auto' ? 'Auto' : 'Review'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* When + Location */}
-                  <p className="text-xs mt-0.5 mb-1.5" style={{ color: 'var(--accent)' }}>
-                    {item.when} • {item.status === 'auto' ? 'On-property' : 'Off-property'}
+            <div key={i} className="flex gap-3 items-start">
+              <span className="font-bold text-xl" style={{ color: 'var(--accent)', marginTop: '2px', flexShrink: 0 }}>•</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-lg font-bold leading-snug">{title}</p>
+                <Collapsible title="Details & Data Source" defaultOpen={false}>
+                  <p style={{ fontSize: '0.9rem', marginBottom: '8px' }}>{description}</p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Data source:
                   </p>
-
-                  {/* Description */}
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{description}</p>
-
-                  {/* Source & Status */}
-                  <div className="mt-2 flex gap-2">
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full"
-                      style={{
-                        backgroundColor: item.status === 'auto' ? 'var(--success-bg)' : 'var(--pivot-bg)',
-                        color: item.status === 'auto' ? 'var(--success)' : 'var(--pivot)',
-                      }}
-                    >
-                      {item.status === 'auto' ? '✓ Confirmed' : '○ Requested'}
-                    </span>
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-full"
-                      style={{
-                        backgroundColor: 'var(--surface-alt)',
-                        color: 'var(--text-muted)',
-                      }}
-                    >
-                      Source: {item.whyThisGuest.includes('concierge') ? 'Concierge suggested' : item.whyThisGuest.includes('guest') ? 'Guest request' : 'Package'}
-                    </span>
-                  </div>
-
-                  {/* Dietary notes if applicable */}
-                  {item.whyThisGuest.toLowerCase().includes('vegetarian') && (
-                    <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
-                      🥗 Vegetarian, no alcohol, quiet seating
-                    </p>
-                  )}
-
-                  {/* Show both languages when dual-language */}
-                  {itinerary.dualLanguage && item.localizedContent && lang === 'native' && (
-                    <p className="text-xs mt-2" style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                      {item.title}
-                    </p>
-                  )}
-                </div>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                    ✓ Inferred from guest profile preferences, past stay history, and local events matching guest interests
+                  </p>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {item.when} • {item.status === 'auto' ? 'Confirmed' : 'Pending'}
+                  </p>
+                </Collapsible>
               </div>
             </div>
           );

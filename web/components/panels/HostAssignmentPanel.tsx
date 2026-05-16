@@ -1,6 +1,7 @@
 import React from 'react';
 import type { HostAssignment } from '../../../shared/types';
 import staffData from '../../../data/staff.json';
+import Collapsible from '../Collapsible';
 
 interface StaffRecord {
   id: string;
@@ -19,105 +20,120 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-const FACTOR_ICONS: Record<string, string> = {
-  continuity: '🔁',
-  language: '🗣',
-  affinity: '✦',
-  availability: '✓',
-};
-
 export default function HostAssignmentPanel({ assignment, guestId, className, style }: Props) {
   const staff = (staffData as unknown as StaffRecord[]).find(s => s.id === assignment.assignedStaffId);
 
   return (
     <div
-      className={`rounded-xl border overflow-hidden ${className ?? ''}`}
-      style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)', ...style }}
+      className={`${className ?? ''}`}
+      style={{ borderTop: '3px solid var(--accent)', paddingTop: '16px', ...style }}
     >
       {/* Header */}
-      <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-light)' }}>
-        <h3 className="font-serif text-xl font-light">Host Assignment</h3>
-        <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: 'var(--text-muted)' }}>Guest Experience Host</p>
-      </div>
+      <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text)' }}>Host Assignment</h2>
 
-      <div className="p-6 space-y-5">
-        {/* Assigned host */}
-        {staff && (
-          <div
-            className="rounded-xl p-5"
-            style={{ backgroundColor: 'var(--surface-alt)', border: '1px solid var(--border-light)' }}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="font-serif text-2xl font-light">{staff.name}</p>
-                <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>{staff.role}</p>
-              </div>
-              {assignment.continuityFlag && (
-                <div
-                  className="text-xs px-2.5 py-1 rounded-full font-medium"
-                  style={{ backgroundColor: 'var(--success-bg)', color: 'var(--success)', border: '1px solid #BBF7D0' }}
-                >
-                  Continuity Match
-                </div>
-              )}
-            </div>
-
-            {/* Languages */}
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {staff.languages.map(lang => (
-                <span
-                  key={lang}
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
-                >
-                  {lang}
-                </span>
-              ))}
-            </div>
-
-            {/* Specialties */}
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {staff.specialties.slice(0, 3).map(sp => (
-                <span
-                  key={sp}
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: 'rgba(156,125,90,0.1)', color: 'var(--accent)', border: '1px solid rgba(156,125,90,0.2)' }}
-                >
-                  {sp}
-                </span>
-              ))}
-            </div>
-
-            {/* Match quality */}
-            <div className="mt-4 flex items-center gap-2">
-              <span
-                className="text-xs px-3 py-1 rounded-full font-medium"
-                style={{
-                  backgroundColor: assignment.confidence > 0.85 ? 'var(--success-bg)' : 'var(--surface-alt)',
-                  color: assignment.confidence > 0.85 ? 'var(--discovery-green)' : 'var(--discovery-green)',
-                }}
-              >
-                {assignment.confidence > 0.85 ? '✓ Strong match' : '○ Good fit'}
-              </span>
-            </div>
+      {/* Assigned Host */}
+      {staff && (
+        <div className="space-y-4">
+          {/* Host Name and Role */}
+          <div style={{ borderBottom: '2px solid var(--accent)', paddingBottom: '12px' }}>
+            <h3 className="text-2xl font-bold mb-1" style={{ color: 'var(--text)' }}>
+              {staff.name}
+            </h3>
+            <p className="text-base" style={{ color: 'var(--text-muted)' }}>{staff.role}</p>
           </div>
-        )}
 
-        {/* Match reasoning */}
-        <div>
-          <p className="text-xs tracking-widest uppercase mb-3" style={{ color: 'var(--text-muted)' }}>Why Maria</p>
-          <div className="space-y-2.5">
-            {assignment.matchReasons.map((reason, i) => (
-              <div key={i} className="flex gap-2">
-                <span className="text-lg flex-shrink-0">{FACTOR_ICONS[reason.factor] ?? '·'}</span>
-                <div className="flex-1">
-                  <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{reason.detail}</p>
-                </div>
-              </div>
-            ))}
+          {/* Match Score - Primary Decision */}
+          <div style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '12px' }}>
+            <p className="font-bold text-base mb-1">
+              Match Score: {Math.round(assignment.confidence * 100)}%
+            </p>
+            {assignment.continuityFlag && (
+              <p className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+                ✓ Returning guest match
+              </p>
+            )}
+            <Collapsible title="Why this assignment" defaultOpen={false}>
+              <p className="text-sm mb-2">
+                <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Data sources:</span>
+              </p>
+              <ul className="text-xs space-y-1 ml-2 mb-2">
+                {assignment.continuityFlag && (
+                  <li>✓ Staff history: {staff.name} has hosted this guest in past stays</li>
+                )}
+                <li>✓ Language match: Staff speaks guest's language preferences</li>
+                <li>✓ Availability: Staff is on shift and able to provide personalized service</li>
+              </ul>
+              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                The system prioritizes continuity for returning guests when available staff has prior relationship and shared language.
+              </p>
+            </Collapsible>
           </div>
+
+          {/* Languages - Highlighted in Green */}
+          {staff.languages.length > 0 && (
+            <div>
+              <p className="font-bold text-sm mb-2">Languages</p>
+              <div className="flex flex-wrap gap-2">
+                {staff.languages.map(lang => (
+                  <span
+                    key={lang}
+                    className="text-sm font-semibold px-3 py-1"
+                    style={{ backgroundColor: 'var(--accent)', color: 'white' }}
+                  >
+                    {lang}
+                  </span>
+                ))}
+              </div>
+              <Collapsible title="Data source" defaultOpen={false}>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  ✓ Verified language proficiency from staff training records and guest communication history
+                </p>
+              </Collapsible>
+            </div>
+          )}
+
+          {/* Specialties */}
+          {staff.specialties.length > 0 && (
+            <div>
+              <p className="font-bold text-sm mb-2">Specialties</p>
+              <ul className="space-y-1 text-sm">
+                {staff.specialties.slice(0, 3).map(sp => (
+                  <li key={sp}>• {sp}</li>
+                ))}
+              </ul>
+              <Collapsible title="Why these specialties matter" defaultOpen={false}>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  Specialties aligned with guest preferences from profile and past interactions. This staff member's skills directly match the guest's likely needs.
+                </p>
+              </Collapsible>
+            </div>
+          )}
+
+          {/* Match Reasoning */}
+          {assignment.matchReasons.length > 0 && (
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+              <p className="font-bold text-sm mb-2">Matching Factors</p>
+              <ul className="space-y-2 text-sm">
+                {assignment.matchReasons.map((reason, i) => (
+                  <li key={i}>
+                    <strong style={{ color: 'var(--accent)' }}>
+                      {reason.factor.charAt(0).toUpperCase() + reason.factor.slice(1)}
+                    </strong>
+                    <Collapsible title={`${reason.detail.substring(0, 40)}...`} defaultOpen={false}>
+                      <p className="text-xs mb-1">
+                        <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Inference:</span>
+                      </p>
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                        {reason.detail}
+                      </p>
+                    </Collapsible>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
