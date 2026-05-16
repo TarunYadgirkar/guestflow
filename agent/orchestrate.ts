@@ -1,6 +1,4 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { readFileSync } from "fs";
-import { resolve } from "path";
 import * as dotenv from "dotenv";
 
 import type {
@@ -11,21 +9,13 @@ import type {
   MatchReason,
   HostAssignment,
 } from "../shared/types";
+import { getSources } from "./sources";
 
 dotenv.config(); // loads .env from cwd in local dev; no-op on Vercel (env vars injected)
 
-const DATA_DIR = resolve(process.cwd(), "data");
-
-// ─── DATA LOADERS ────────────────────────────────────────────────────────────
-
-function load<T>(filename: string): T {
-  return JSON.parse(readFileSync(resolve(DATA_DIR, filename), "utf-8")) as T;
-}
-
 // ─── MOCK FLIGHT ─────────────────────────────────────────────────────────────
-// TODO: replace with live flight API — set FLIGHT_API_KEY in .env and call e.g. FlightAware AeroAPI
-// GET https://aeroapi.flightaware.com/aeroapi/flights/{ident}/position
-// The delayMinutes param below is a temporary demo stand-in for a real delay reaction.
+// Integration point: Replace with live FlightAware AeroAPI when available.
+// Real implementation would use Sabre or FlightAware APIs. Mock adapter handles demo.
 
 function getMockFlight(flightNumber: string | null, delayMinutes = 0): FlightStatus {
   const scheduled = new Date("2026-05-17T22:45:00-07:00");
@@ -578,16 +568,19 @@ export async function orchestrate(
   guestId: string,
   flightDelayMinutes = 0
 ): Promise<OrchestrationResult> {
-  const flight = getMockFlight(null, flightDelayMinutes);
+  const sources = getSources();
+  const flight = sources.flight.getFlightStatus(null, flightDelayMinutes);
 
   try {
-    const guests = load<Guest[]>("guests.json");
-    const guest = guests.find((g) => g.id === guestId);
+    const guest = sources.guests.getGuest(guestId);
     if (!guest) throw new Error(`Guest not found: ${guestId}`);
 
-    const staff = load<StaffMember[]>("staff.json");
-    const localEvents = load<unknown[]>("localEvents.json");
-    const guestFlight = getMockFlight(guest.upcomingReservation.flightNumber, flightDelayMinutes);
+    const staff = sources.staff.getStaff();
+    const localEvents = sources.events.getLocalEvents();
+    const guestFlight = sources.flight.getFlightStatus(
+      guest.upcomingReservation.flightNumber,
+      flightDelayMinutes
+    );
 
     const { member: assignedStaff, reasons, confidence: matchConfidence } = matchHost(guest, staff);
     const assignment: HostAssignment = {
