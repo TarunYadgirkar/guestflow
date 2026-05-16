@@ -1,11 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { readFileSync } from "fs";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
+import { resolve } from "path";
 import * as dotenv from "dotenv";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 import type {
   OrchestrationResult,
@@ -16,9 +12,8 @@ import type {
   HostAssignment,
 } from "../shared/types";
 
-dotenv.config({ path: resolve(__dirname, "../.env") });
+dotenv.config(); // loads .env from cwd in local dev; no-op on Vercel (env vars injected)
 
-// process.cwd() = project root in both local dev and Vercel Lambda
 const DATA_DIR = resolve(process.cwd(), "data");
 
 // ─── DATA LOADERS ────────────────────────────────────────────────────────────
