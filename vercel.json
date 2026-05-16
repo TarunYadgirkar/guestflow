@@ -2,10 +2,12 @@
   "buildCommand": "vite build --config config/vite.config.ts",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "functions": {
     "api/orchestrate.ts": {
+      "maxDuration": 60,
       "includeFiles": "data/**"
     }
   }

@@ -18,7 +18,8 @@ import type {
 
 dotenv.config({ path: resolve(__dirname, "../.env") });
 
-const DATA_DIR = resolve(__dirname, "../data");
+// process.cwd() = project root in both local dev and Vercel Lambda
+const DATA_DIR = resolve(process.cwd(), "data");
 
 // ─── DATA LOADERS ────────────────────────────────────────────────────────────
 

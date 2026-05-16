@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ArrowRight } from '@phosphor-icons/react';
 import type { OrchestrationResult, TraceStep } from '../shared/types';
 import GuestSelector from './components/GuestSelector';
 import ReasoningTrace from './components/ReasoningTrace';
@@ -62,9 +63,11 @@ export default function App() {
     stepIndexRef.current = 0;
     apiResultRef.current = null;
 
-    // Fetch from API in parallel
     fetch(`/api/orchestrate?guestId=${selectedGuestId}&delay=${delayMinutes}`)
-      .then(r => r.json())
+      .then(async r => {
+        if (!r.ok) throw new Error(`API error ${r.status}`);
+        return r.json();
+      })
       .then((data: OrchestrationResult) => {
         apiResultRef.current = data;
       })
@@ -74,13 +77,11 @@ export default function App() {
         if (stepTimerRef.current) clearInterval(stepTimerRef.current);
       });
 
-    // Animate trace steps
     stepTimerRef.current = setInterval(() => {
       stepIndexRef.current += 1;
       const idx = stepIndexRef.current;
 
       if (idx >= BLANK_TRACE.length) {
-        // All steps done — check if API is back
         if (stepTimerRef.current) clearInterval(stepTimerRef.current);
 
         const flush = () => {
@@ -89,7 +90,6 @@ export default function App() {
             setResult(apiResultRef.current);
             setPhase('done');
           } else {
-            // Wait for API response
             setTimeout(flush, 200);
           }
         };
@@ -100,7 +100,6 @@ export default function App() {
       const realResult = apiResultRef.current;
       setLiveTrace(prev => {
         const updated = [...prev];
-        // Mark previous step complete (using real data if available)
         if (updated[idx - 1]) {
           updated[idx - 1] = realResult?.reasoningTrace[idx - 1] ?? {
             ...BLANK_TRACE[idx - 1]!,
@@ -108,7 +107,6 @@ export default function App() {
             detail: '…',
           };
         }
-        // Add next step as running
         if (BLANK_TRACE[idx]) {
           updated[idx] = { ...BLANK_TRACE[idx]!, status: 'running' };
         }
@@ -162,9 +160,9 @@ export default function App() {
               <button
                 onClick={handleOrchestrate}
                 disabled={!canOrchestrate}
-                className="btn-primary text-sm py-2 px-6"
+                className="btn-primary text-sm py-2 px-6 inline-flex items-center gap-2"
               >
-                {phase === 'tracing' ? 'Generating…' : 'Generate Arrival Plan'}
+                {phase === 'tracing' ? 'Generating…' : <><span>Generate Arrival Plan</span><ArrowRight size={14} /></>}
               </button>
               {phase === 'done' && (
                 <button
@@ -194,7 +192,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Reasoning Trace - Compact */}
+        {/* Reasoning Trace */}
         {(phase === 'tracing' || phase === 'done') && liveTrace.length > 0 && (
           <div className="mb-6 p-6" style={{ backgroundColor: '#F5F5F5', borderTop: '2px solid var(--accent)' }}>
             <ReasoningTrace steps={liveTrace} />

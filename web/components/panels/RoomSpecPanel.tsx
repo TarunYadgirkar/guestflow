@@ -1,6 +1,7 @@
 import React from 'react';
 import type { RoomSpec } from '../../../shared/types';
 import Collapsible from '../Collapsible';
+import { ChartBar, MapPin, Lightning, Check, Moon, CoatHanger } from '@phosphor-icons/react';
 
 interface Props {
   roomSpec: RoomSpec;
@@ -27,11 +28,21 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
                 INFERENCE CHAIN:
               </p>
               <div style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text)' }}>
-                <div style={{ marginBottom: '4px' }}>📊 <strong>Data:</strong> Guest departing Mumbai (95°F)</div>
-                <div style={{ marginBottom: '4px' }}>📍 <strong>Arrival:</strong> Menlo Park (58°F)</div>
-                <div style={{ marginBottom: '4px' }}>⚡ <strong>Climate Delta:</strong> 37°F drop detected</div>
-                <div style={{ marginBottom: '8px', paddingTop: '4px', borderTop: '1px solid #E0E0E0' }}>
-                  ✓ <strong>Decision:</strong> Pre-heat room to {roomSpec.temperatureF}°F for immediate comfort on arrival
+                <div className="flex items-center gap-1.5" style={{ marginBottom: '4px' }}>
+                  <ChartBar size={14} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                  <span><strong>Data:</strong> Guest departing Mumbai (95°F)</span>
+                </div>
+                <div className="flex items-center gap-1.5" style={{ marginBottom: '4px' }}>
+                  <MapPin size={14} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                  <span><strong>Arrival:</strong> Menlo Park (58°F)</span>
+                </div>
+                <div className="flex items-center gap-1.5" style={{ marginBottom: '4px' }}>
+                  <Lightning size={14} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                  <span><strong>Climate Delta:</strong> 37°F drop detected</span>
+                </div>
+                <div className="flex items-center gap-1.5" style={{ marginBottom: '8px', paddingTop: '4px', borderTop: '1px solid #E0E0E0' }}>
+                  <Check size={14} weight="bold" style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                  <span><strong>Decision:</strong> Pre-heat room to {roomSpec.temperatureF}°F for immediate comfort on arrival</span>
                 </div>
               </div>
             </div>
@@ -39,16 +50,19 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
               DATA SOURCES:
             </p>
             <ul className="text-xs space-y-1 ml-2 mb-2">
-              <li>✓ Guest comfort preference: {roomSpec.temperatureF}°F (from profile)</li>
-              <li>✓ Previous stays: Consistent preference confirmed across 3 prior visits</li>
-              <li>📊 Real-time flight data: Departure climate verified</li>
+              <li className="flex items-center gap-1"><Check size={11} weight="bold" style={{ color: 'var(--accent)' }} /> Guest comfort preference: {roomSpec.temperatureF}°F (from profile)</li>
+              <li className="flex items-center gap-1"><Check size={11} weight="bold" style={{ color: 'var(--accent)' }} /> Previous stays: Consistent preference confirmed across 3 prior visits</li>
+              <li className="flex items-center gap-1"><ChartBar size={11} style={{ color: 'var(--accent)' }} /> Real-time flight data: Departure climate verified</li>
             </ul>
           </Collapsible>
         </div>
 
         {/* Lighting */}
         <div style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '12px' }}>
-          <p className="font-bold text-base mb-1">Lighting: {roomSpec.circadianHandshake.lightingKelvin}K</p>
+          <p className="font-bold text-base mb-1 flex items-center gap-1.5">
+            <Moon size={16} style={{ color: 'var(--accent)' }} />
+            Lighting: {roomSpec.circadianHandshake.lightingKelvin}K
+          </p>
           <Collapsible title="Why this color temp" defaultOpen={false}>
             <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
               Optimized for circadian rhythm adjustment on arrival. Guest has early wake preference (based on past stays).
@@ -60,16 +74,18 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
         <div style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '12px' }}>
           <p className="font-bold text-base mb-1">Pillows: {roomSpec.pillowType}</p>
           <Collapsible title="Data source" defaultOpen={false}>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              ✓ Guest profile preference: {roomSpec.pillowType} pillows (confirmed in 2 previous stays)
+            <p className="text-xs flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
+              <Check size={11} weight="bold" style={{ color: 'var(--accent)' }} />
+              Guest profile preference: {roomSpec.pillowType} pillows (confirmed in 2 previous stays)
             </p>
           </Collapsible>
         </div>
 
-        {/* Climate Control Adjustment - if applicable */}
+        {/* Sartorial Rescue / Pre-warm */}
         {roomSpec.sartorialRescue && (
           <div style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '12px', backgroundColor: '#F0F9FF', padding: '10px 12px' }}>
-            <p className="font-bold text-base mb-1" style={{ color: 'var(--accent)' }}>
+            <p className="font-bold text-base mb-1 flex items-center gap-1.5" style={{ color: 'var(--accent)' }}>
+              <CoatHanger size={16} />
               Heating System: Pre-warm room to {roomSpec.temperatureF}°F
             </p>
             <Collapsible title="AI Decision Logic" defaultOpen={true}>
@@ -82,8 +98,9 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
                   <div style={{ marginBottom: '4px' }}>2️⃣ Arrival: Menlo Park climate ~58°F</div>
                   <div style={{ marginBottom: '4px' }}>3️⃣ Temperature shock: 37°F drop</div>
                   <div style={{ marginBottom: '4px' }}>4️⃣ Threshold check: Exceeds 30°F auto-trigger</div>
-                  <div style={{ marginBottom: '8px', paddingTop: '4px', borderTop: '1px solid #E0E0E0' }}>
-                    ✓ Outcome: Pre-heat to {roomSpec.temperatureF}°F before arrival
+                  <div className="flex items-center gap-1.5" style={{ marginBottom: '8px', paddingTop: '4px', borderTop: '1px solid #E0E0E0' }}>
+                    <Check size={14} weight="bold" style={{ color: 'var(--accent)' }} />
+                    <span>Outcome: Pre-heat to {roomSpec.temperatureF}°F before arrival</span>
                   </div>
                 </div>
               </div>
@@ -94,10 +111,11 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
           </div>
         )}
 
-        {/* Dynamic Empathy Pivot - if applicable */}
+        {/* Dynamic Empathy Pivot */}
         {roomSpec.dynamicEmpathyAmenity && (
           <div style={{ borderLeft: '3px solid var(--accent)', paddingLeft: '12px', backgroundColor: '#F0F9FF', padding: '10px 12px' }}>
-            <p className="font-bold text-base mb-1" style={{ color: 'var(--accent)' }}>
+            <p className="font-bold text-base mb-1 flex items-center gap-1.5" style={{ color: 'var(--accent)' }}>
+              <Lightning size={16} />
               Special Adaptation: {roomSpec.dynamicEmpathyAmenity.replacement}
             </p>
             <Collapsible title="Reasoning" defaultOpen={true}>
@@ -117,7 +135,7 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
           </div>
         )}
 
-        {/* Collapsible Additional Details */}
+        {/* Additional Details */}
         {(roomSpec.environmentNotes.length > 0 || roomSpec.backOfficeStandby.length > 0) && (
           <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--border)' }}>
             {roomSpec.environmentNotes.length > 0 && (
@@ -139,6 +157,11 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
                       <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                         {Math.round(item.confidence * 100)}% confidence • {item.deliveryPromise}
                       </p>
+                      {item.localResourceInfo && (
+                        <p className="flex items-center gap-1 mt-1" style={{ fontSize: '0.8rem', color: 'var(--accent)' }}>
+                          <MapPin size={12} /> {item.localResourceInfo}
+                        </p>
+                      )}
                     </li>
                   ))}
                 </ul>

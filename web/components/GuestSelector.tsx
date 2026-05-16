@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Collapsible from './Collapsible';
+import { Check, User, Star } from '@phosphor-icons/react';
 
 interface GuestCard {
   id: string;
@@ -137,14 +138,12 @@ interface GuestSelectorProps {
   disabled?: boolean;
 }
 
-// Map properties to guest IDs
 const PROPERTY_GUEST_MAP: Record<string, string[]> = {
   'rsw-sandhill': ['g_tarun', 'g_carlos'],
   'rsw-beijing': ['g_mei'],
   'rsw-miyakojima': ['g_yuki'],
 };
 
-// Generate comprehensive AI summary of guest data
 function generateGuestSummary(data: Record<string, unknown>): string {
   const prefs = data.preferences as Record<string, unknown> | undefined;
   const origin = data.originProfile as Record<string, unknown> | undefined;
@@ -159,26 +158,22 @@ function generateGuestSummary(data: Record<string, unknown>): string {
 
   const parts: string[] = [];
 
-  // Origin location
   if (origin?.city && origin?.region) {
     const city = origin.city as string;
     const climateF = origin.climateF as number;
     parts.push(`Traveling from ${city} (${climateF}°F climate)`);
   }
 
-  // Companion info
   if (companion?.firstName) {
     const compName = companion.firstName as string;
     const compRel = companion.relationship as string;
     parts.push(`Coming with ${compRel}: ${compName}`);
   }
 
-  // Language & communication
   if (langs?.length) {
     parts.push(`Languages: ${langs.join('/')}`);
   }
 
-  // Dietary & allergies
   if (dietary?.length) {
     const dietary_str = dietary.join(', ');
     const compAllergies = companion?.preferences ? (companion.preferences as Record<string, unknown>).allergies as string[] | undefined : undefined;
@@ -189,30 +184,25 @@ function generateGuestSummary(data: Record<string, unknown>): string {
     }
   }
 
-  // Dining style
   if (diningPrefs?.cuisines) {
     const cuisines = diningPrefs.cuisines as string[];
     parts.push(`Enjoys: ${cuisines.slice(0, 2).join(', ')}`);
   }
 
-  // Attire & packing
   if (attire?.packingStyle) {
     parts.push(`Style: ${attire.packingStyle}`);
   }
 
-  // Technology & charging
   if (tech?.devices) {
     const devices = tech.devices as Array<Record<string, unknown>>;
     const chargerTypes = [...new Set(devices.map(d => d.charger))].join('/');
     parts.push(`Tech: Needs ${chargerTypes} chargers`);
   }
 
-  // Activity patterns
   if (interests?.length) {
     parts.push(`Interests: ${interests.slice(0, 2).join(', ')}`);
   }
 
-  // Previous stay count
   if (history?.length) {
     parts.push(`${history.length} previous stay${history.length > 1 ? 's' : ''} on record`);
   }
@@ -256,12 +246,10 @@ export default function GuestSelector({ selectedGuestId, onSelect, propertyId, d
                     animationDelay: `${idx * 100}ms`,
                   }}
                 >
-                  {/* Guest name - Primary */}
+                  {/* Guest name */}
                   <h3
                     className="mb-3 font-bold text-xl"
-                    style={{
-                      color: isSelected ? 'white' : 'var(--text)',
-                    }}
+                    style={{ color: isSelected ? 'white' : 'var(--text)' }}
                   >
                     {guest.title} {guest.name}
                   </h3>
@@ -271,9 +259,9 @@ export default function GuestSelector({ selectedGuestId, onSelect, propertyId, d
                     <strong>{guest.tier}</strong> • {guest.tripPurpose}
                   </p>
 
-                  {/* Languages - Highlight matching in green */}
+                  {/* Languages */}
                   <p className="text-sm mb-2" style={{ color: isSelected ? 'rgba(255,255,255,0.9)' : 'var(--text)' }}>
-                    {guest.languages.includes('English') && <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Speaks English • </span>}
+                    {guest.languages.includes('English') && <span style={{ color: isSelected ? 'rgba(255,255,255,0.9)' : 'var(--accent)', fontWeight: 'bold' }}>Speaks English • </span>}
                     {guest.languages}
                   </p>
 
@@ -282,16 +270,22 @@ export default function GuestSelector({ selectedGuestId, onSelect, propertyId, d
                     {guest.restrictions}
                   </p>
 
-                  {/* Status quick indicators */}
-                  <div className="flex gap-2 text-xs font-semibold">
+                  {/* Status indicators */}
+                  <div className="flex flex-wrap gap-2 text-xs font-semibold">
                     {guest.itineraryStatus === 'confirmed' && (
-                      <span style={{ color: isSelected ? 'white' : 'var(--accent)' }}>✓ Itinerary</span>
+                      <span className="inline-flex items-center gap-0.5" style={{ color: isSelected ? 'white' : 'var(--accent)' }}>
+                        <Check size={11} weight="bold" /> Itinerary
+                      </span>
                     )}
                     {guest.assignedHost && (
-                      <span style={{ color: isSelected ? 'white' : 'var(--text-muted)' }}>👤 {guest.assignedHost.split(' ')[0]}</span>
+                      <span className="inline-flex items-center gap-0.5" style={{ color: isSelected ? 'white' : 'var(--text-muted)' }}>
+                        <User size={11} /> {guest.assignedHost.split(' ')[0]}
+                      </span>
                     )}
                     {guest.eliteAdvisor && (
-                      <span style={{ color: isSelected ? 'white' : 'var(--accent)', fontWeight: 'bold' }}>★ Elite</span>
+                      <span className="inline-flex items-center gap-0.5" style={{ color: isSelected ? 'white' : 'var(--accent)', fontWeight: 'bold' }}>
+                        <Star size={11} weight="fill" /> Elite
+                      </span>
                     )}
                   </div>
                 </button>
