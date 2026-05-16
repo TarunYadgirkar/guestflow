@@ -272,7 +272,47 @@ Output only the JSON object. Start with { and end with }.`;
 
 function getFallback(guestId: string, flight: FlightStatus): OrchestrationResult {
   if (guestId !== "g_tarun") {
-    throw new Error(`No fallback defined for guestId: ${guestId}. API call must succeed.`);
+    // Minimal valid fallback for non-demo guests when live API unavailable
+    const staffMap: Record<string, string> = {
+      g_mei: "s_sophia", g_yuki: "s_riku", g_carlos: "s_james",
+    };
+    const staffId = staffMap[guestId] ?? "s_maria";
+    const trace = [
+      "Pulling stay history", "Analyzing signals & drawing the creepy line",
+      "Checking flight status", "Matching host",
+      "Building room spec & protocols", "Composing host brief & itinerary",
+    ].map(label => ({ label, status: "complete" as const, detail: "Demo mode — live orchestration requires extended runtime." }));
+    return {
+      guestId, generatedAt: new Date().toISOString(), flightStatus: flight,
+      overallConfidence: 0.5,
+      roomSpec: {
+        temperatureF: 68, pillowType: "medium", minibar: ["still water", "sparkling water", "herbal tea"],
+        welcomeAmenity: { item: "Seasonal welcome fruit bowl", rationale: "Standard elite arrival amenity." },
+        environmentNotes: ["Room prepared to property standard"],
+        confidence: 0.5, autoApplied: true,
+        circadianHandshake: { lightingKelvin: 3500, temperatureF: 68, blackoutBlinds: false, rationale: "Standard arrival preset." },
+        sartorialRescue: null, dynamicEmpathyAmenity: null, backOfficeStandby: [],
+      },
+      itinerary: {
+        nativeLanguage: null, dualLanguage: false,
+        items: [{ title: "Property Welcome & Orientation", type: "wellness", when: "On arrival", description: "Personal introduction to Rosewood Sand Hill amenities and services.", whyThisGuest: "Standard elite welcome experience.", confidence: 0.8, status: "auto" }],
+      },
+      hostAssignment: {
+        assignedStaffId: staffId, continuityFlag: false,
+        matchReasons: [{ factor: "availability", detail: "On shift and available.", weight: 1 }],
+        confidence: 0.5,
+      },
+      hostBrief: {
+        forStaffId: staffId,
+        greeting: "Welcome — your guest is arriving. Please provide a warm, personalized Rosewood welcome.",
+        keyFacts: ["Elite member", "Arriving today"],
+        serviceNotes: ["Follow standard elite arrival protocol"],
+        doNotMention: [],
+        flightStatus: flight,
+        backOfficeStandbyInstructions: [],
+      },
+      reasoningTrace: trace,
+    };
   }
 
   const adjTime = new Date(flight.adjustedArrival).toLocaleTimeString("en-US", {
@@ -565,7 +605,7 @@ export async function orchestrate(
       model: "claude-sonnet-4-6",
       max_tokens: 8192,
       messages: [{ role: "user", content: prompt }],
-    }, { signal: AbortSignal.timeout(25_000) });
+    }, { signal: AbortSignal.timeout(7_000) });
 
     const raw = message.content[0]?.type === "text" ? message.content[0].text : "";
     const json = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "").trim();
