@@ -426,5 +426,396 @@
         "sensitivity": "low"
       }
     ]
+  },
+  {
+    "id": "g_alex",
+    "title": "Ms.",
+    "firstName": "Alexandra",
+    "lastName": "Caldwell",
+    "loyaltyTier": "Rosewood Elite",
+    "preferredLanguage": "English",
+    "languages": ["English", "French"],
+    "originProfile": {
+      "timezone": "Europe/London",
+      "climateF": 55,
+      "plugType": "Type G",
+      "preferredTelecom": "iMessage"
+    },
+    "preferences": {
+      "water": "still",
+      "roomTempF": 66,
+      "pillowType": "hypoallergenic",
+      "floor": "high",
+      "quietRoom": true,
+      "dietary": ["pescatarian", "gluten-free"],
+      "wakeUpTime": null,
+      "interests": ["long-form reading", "barre", "independent cinema", "garden walks"]
+    },
+    "stayHistory": [
+      {
+        "property": "Rosewood London",
+        "checkIn": "2025-02-12",
+        "checkOut": "2025-02-16",
+        "hostStaffId": "s_maria",
+        "serviceNotes": "Booked under maiden name 'A. Hartley' for privacy. Requested service entrance arrival, no lobby crossing, no name used in public-facing communication. Declined turndown service; preferred fresh linens left in suite for self-service. Brought personal trainer for in-suite barre sessions at 06:00.",
+        "highlight": "Maria coordinated a silent floor protocol with housekeeping; guest left a hand-written note thanking the team for 'making me feel like a person, not a poster'"
+      },
+      {
+        "property": "Rosewood Hong Kong",
+        "checkIn": "2025-08-03",
+        "checkOut": "2025-08-07",
+        "hostStaffId": "s_sophia",
+        "serviceNotes": "Recovery stay between film shoots. Severe jet lag; requested blackout protocol and circadian-aligned lighting. In-room spa treatments only — never used public wellness facilities. Pre-arranged car with tinted windows for all departures.",
+        "highlight": "Sophia arranged private after-hours access to the M+ museum; guest specifically asked that the visit never be referenced publicly"
+      }
+    ],
+    "upcomingReservation": {
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-17",
+      "checkOut": "2026-05-22",
+      "roomType": "Garden Villa",
+      "partySize": 1,
+      "flightNumber": "BA287",
+      "occasion": null
+    },
+    "signals": [
+      {
+        "kind": "social",
+        "detail": "Public profile: lead actress in two films currently in theatrical release; tabloid coverage of recent personal life is active. Booking pattern across Rosewood properties consistently uses maiden name and requests no public acknowledgment. Staff must NEVER reference her career, films, public persona, or any tabloid context — even warmly. She is here as a private guest.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "calendar",
+        "detail": "Five-day stay with zero external bookings — no dining reservations, no meetings, no spa appointments outside the villa. Pattern matches her prior 'decompression weeks' at Rosewood London and Hong Kong.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "loyalty",
+        "detail": "Third Rosewood stay; first visit to Sand Hill. Booked the Garden Villa specifically — most private inventory on property, dedicated entrance, no shared corridors.",
+        "sensitivity": "medium"
+      },
+      {
+        "kind": "weather",
+        "detail": "Departing London at 55°F; arriving Menlo Park at 58°F — 3°F delta, no Sartorial Rescue trigger.",
+        "sensitivity": "low"
+      }
+    ]
+  },
+  {
+    "id": "g_wellington",
+    "title": "Mrs.",
+    "firstName": "Sarah",
+    "lastName": "Wellington",
+    "loyaltyTier": "Rosewood Signature",
+    "preferredLanguage": "English",
+    "languages": ["English"],
+    "originProfile": {
+      "timezone": "America/Chicago",
+      "climateF": 78,
+      "plugType": "Type A",
+      "preferredTelecom": "iMessage"
+    },
+    "preferences": {
+      "water": "still",
+      "roomTempF": 70,
+      "pillowType": "down",
+      "floor": "low",
+      "quietRoom": false,
+      "dietary": ["no nuts"],
+      "wakeUpTime": "07:30",
+      "interests": ["family travel", "horseback riding", "wine country", "photography"]
+    },
+    "stayHistory": [
+      {
+        "property": "Rosewood Miramar Beach",
+        "checkIn": "2024-07-08",
+        "checkOut": "2024-07-13",
+        "hostStaffId": "s_james",
+        "serviceNotes": "Family of four with two children (then ages 7 and 10). Required adjoining rooms, child-safe minibar, and stroller-accessible suite layout. Older child has a documented severe tree-nut allergy — EpiPen logged with front desk. Parents requested a lights-out routine respected (no turndown after 8 PM).",
+        "highlight": "James arranged a private sandcastle-building lesson for the children; daughter still talks about it"
+      }
+    ],
+    "upcomingReservation": {
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-19",
+      "checkOut": "2026-05-23",
+      "roomType": "Two-Bedroom Family Suite",
+      "partySize": 4,
+      "flightNumber": "AA1485",
+      "occasion": "birthday"
+    },
+    "signals": [
+      {
+        "kind": "calendar",
+        "detail": "Daughter Emma's 9th birthday falls on May 21 — middle of stay. Linked Apple Family calendar shows 'Emma's birthday — Sand Hill trip' as the trip's primary event.",
+        "sensitivity": "medium"
+      },
+      {
+        "kind": "loyalty",
+        "detail": "Tree-nut allergy flag persists across all past stays; F&B team has historical documentation. Re-confirm with kitchen on arrival — never assume.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "social",
+        "detail": "Mrs. Wellington's Instagram features extensive family travel content; she has previously posted thank-you stories tagging Rosewood properties. Comfortable with light, tasteful acknowledgment of the birthday.",
+        "sensitivity": "low"
+      }
+    ]
+  },
+  {
+    "id": "g_fatima",
+    "title": "Dr.",
+    "firstName": "Fatima",
+    "lastName": "Al-Rashid",
+    "loyaltyTier": "Rosewood Signature",
+    "preferredLanguage": "Arabic",
+    "languages": ["Arabic", "English", "French"],
+    "originProfile": {
+      "timezone": "Asia/Riyadh",
+      "climateF": 102,
+      "plugType": "Type G",
+      "preferredTelecom": "WhatsApp"
+    },
+    "preferences": {
+      "water": "still",
+      "roomTempF": 72,
+      "pillowType": "firm",
+      "floor": "high",
+      "quietRoom": true,
+      "dietary": ["halal", "no pork", "no alcohol"],
+      "wakeUpTime": "04:45",
+      "interests": ["biotech research", "Islamic calligraphy", "modernist architecture", "tea"]
+    },
+    "stayHistory": [],
+    "upcomingReservation": {
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-18",
+      "checkOut": "2026-05-21",
+      "roomType": "Deluxe Suite",
+      "partySize": 1,
+      "flightNumber": "SV41",
+      "occasion": "business"
+    },
+    "signals": [
+      {
+        "kind": "loyalty",
+        "detail": "First-ever Rosewood stay — no continuity host, no service history. Confidence on all soft inferences must be lower than for returning guests.",
+        "sensitivity": "low"
+      },
+      {
+        "kind": "social",
+        "detail": "Professional bio: Stanford-trained molecular biologist, partner at a Riyadh biotech fund. Public LinkedIn lists role in King Abdulaziz City for Science and Technology and observance of daily prayer in conference scheduling.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "calendar",
+        "detail": "Conference itinerary blocks five short prayer windows daily (Fajr ~04:50, Dhuhr ~12:15, Asr ~15:30, Maghrib ~19:45, Isha ~21:15 local). Wake-up at 04:45 aligns with Fajr.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "weather",
+        "detail": "Departing Riyadh at 102°F; arriving Menlo Park at 58°F — 44°F drop, strong Sartorial Rescue trigger.",
+        "sensitivity": "low"
+      }
+    ]
+  },
+  {
+    "id": "g_oliveira",
+    "title": "Mr.",
+    "firstName": "Lucas",
+    "lastName": "Oliveira",
+    "loyaltyTier": "Rosewood Signature",
+    "preferredLanguage": "Portuguese",
+    "languages": ["Portuguese", "English", "Spanish"],
+    "originProfile": {
+      "timezone": "America/Sao_Paulo",
+      "climateF": 73,
+      "plugType": "Type N",
+      "preferredTelecom": "WhatsApp"
+    },
+    "preferences": {
+      "water": "sparkling",
+      "roomTempF": 68,
+      "pillowType": "down",
+      "floor": "high",
+      "quietRoom": true,
+      "dietary": ["no shellfish"],
+      "wakeUpTime": null,
+      "interests": ["natural wine", "bossa nova", "modernist design", "hiking"]
+    },
+    "stayHistory": [
+      {
+        "property": "Rosewood São Paulo",
+        "checkIn": "2025-12-20",
+        "checkOut": "2025-12-23",
+        "hostStaffId": "s_james",
+        "serviceNotes": "Stayed with partner Mateo Souza. Engagement weekend — James coordinated a private rooftop dinner the second night. Both partners are wine enthusiasts; James arranged a small-producer Brazilian wine flight that was a highlight.",
+        "highlight": "Mateo proposed on the rooftop after the dinner; both guests sent a thank-you card to James the following month"
+      }
+    ],
+    "upcomingReservation": {
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-17",
+      "checkOut": "2026-05-21",
+      "roomType": "Honeymoon Garden Suite",
+      "partySize": 2,
+      "flightNumber": "LA8084",
+      "occasion": "honeymoon"
+    },
+    "signals": [
+      {
+        "kind": "calendar",
+        "detail": "Civil marriage ceremony confirmed in São Paulo on May 14, 2026; Sand Hill stay is the post-wedding honeymoon leg. Wedding hashtag visible on Mateo's public Instagram.",
+        "sensitivity": "medium"
+      },
+      {
+        "kind": "social",
+        "detail": "Both partners post openly about their relationship; comfortable with warm acknowledgment of the honeymoon. Continuity with James from São Paulo engagement weekend is a meaningful thread.",
+        "sensitivity": "low"
+      },
+      {
+        "kind": "loyalty",
+        "detail": "Second Rosewood stay together; first US property visit. Booked the Honeymoon Garden Suite specifically.",
+        "sensitivity": "low"
+      }
+    ]
+  },
+  {
+    "id": "g_brenner",
+    "title": "Dr.",
+    "firstName": "Helmut",
+    "lastName": "Brenner",
+    "loyaltyTier": "Rosewood Elite",
+    "preferredLanguage": "German",
+    "languages": ["German", "English"],
+    "originProfile": {
+      "timezone": "Europe/Berlin",
+      "climateF": 61,
+      "plugType": "Type F",
+      "preferredTelecom": "SMS"
+    },
+    "preferences": {
+      "water": "still",
+      "roomTempF": 69,
+      "pillowType": "firm",
+      "floor": "low",
+      "quietRoom": true,
+      "dietary": ["low-sodium", "no caffeine after 14:00"],
+      "wakeUpTime": "06:00",
+      "interests": ["classical music", "rare books", "chess", "long walks"]
+    },
+    "stayHistory": [
+      {
+        "property": "Rosewood Munich",
+        "checkIn": "2025-05-02",
+        "checkOut": "2025-05-09",
+        "hostStaffId": "s_maria",
+        "serviceNotes": "Walks with a cane; requested step-free room access and a discreet grab bar in the bathroom. Strongly preferred no verbal mention of mobility — staff to simply ensure the path is clear. Cardiac medication on a 06:00/14:00/22:00 schedule; required reliable in-room refrigeration.",
+        "highlight": "Maria arranged a private after-hours visit to the Bayerische Staatsbibliothek rare books room; he described it as the finest moment of his year"
+      },
+      {
+        "property": "Rosewood Vienna",
+        "checkIn": "2025-09-15",
+        "checkOut": "2025-09-19",
+        "hostStaffId": "s_maria",
+        "serviceNotes": "Same accessibility protocol — ground-floor suite, step-free shower, no staff narration of accommodations. Loved the in-suite Bösendorfer; played for an hour each morning.",
+        "highlight": "Specifically requested Maria for any future Rosewood stay regardless of property"
+      }
+    ],
+    "upcomingReservation": {
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-18",
+      "checkOut": "2026-05-24",
+      "roomType": "Garden Cottage",
+      "partySize": 1,
+      "flightNumber": "LH458",
+      "occasion": null
+    },
+    "signals": [
+      {
+        "kind": "social",
+        "detail": "Retired professor of musicology, University of Heidelberg. 78 years old. Mobility cane used consistently in past stays — staff must accommodate invisibly. NEVER reference age, mobility, or medical needs aloud, even sympathetically. The accommodation IS the kindness; commentary undoes it.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "calendar",
+        "detail": "Stanford guest lecture series — three afternoon talks across the stay. Pre-lecture rest windows blocked 11:00–13:30 each lecture day.",
+        "sensitivity": "medium"
+      },
+      {
+        "kind": "loyalty",
+        "detail": "Third Rosewood stay in 18 months; strong continuity preference for s_maria. First Sand Hill visit.",
+        "sensitivity": "low"
+      }
+    ]
+  },
+  {
+    "id": "g_riley",
+    "title": "Mx.",
+    "firstName": "Riley",
+    "lastName": "Thompson",
+    "loyaltyTier": "Rosewood Signature",
+    "preferredLanguage": "English",
+    "languages": ["English"],
+    "originProfile": {
+      "timezone": "America/Los_Angeles",
+      "climateF": 71,
+      "plugType": "Type A",
+      "preferredTelecom": "iMessage"
+    },
+    "preferences": {
+      "water": "sparkling",
+      "roomTempF": 67,
+      "pillowType": "down",
+      "floor": "high",
+      "quietRoom": true,
+      "dietary": ["no alcohol", "plant-forward"],
+      "wakeUpTime": "06:30",
+      "interests": ["screenwriting", "ocean swimming", "vintage cinema", "ceramics"]
+    },
+    "stayHistory": [
+      {
+        "property": "Rosewood Miramar Beach",
+        "checkIn": "2025-10-04",
+        "checkOut": "2025-10-09",
+        "hostStaffId": "s_james",
+        "serviceNotes": "Decompression stay between production cycles. Requested fully alcohol-free minibar — no wine, no beer, no champagne welcome amenity. Asked that this be handled as a quiet preference, not flagged or discussed. Daily 06:30 ocean swim ritual; arranged towel and dry-robe service.",
+        "highlight": "James swapped the standard champagne welcome for a small flight of artisan non-alcoholic aperitifs presented with the same care; guest noted it as a turning point in feeling 'safe' at the property"
+      },
+      {
+        "property": "Rosewood Mayakoba",
+        "checkIn": "2026-01-14",
+        "checkOut": "2026-01-19",
+        "hostStaffId": "s_james",
+        "serviceNotes": "Same alcohol-free protocol. Continued daily ocean swim. James pre-coordinated with F&B so no tasting menus included pairings without an N/A alternative — guest never had to ask or refuse in public.",
+        "highlight": "Wrote a personal note: 'You made sobriety feel like a preference, not a confession.'"
+      }
+    ],
+    "upcomingReservation": {
+      "property": "Rosewood Sand Hill",
+      "checkIn": "2026-05-17",
+      "checkOut": "2026-05-21",
+      "roomType": "Pool Villa",
+      "partySize": 1,
+      "flightNumber": "AS1184",
+      "occasion": null
+    },
+    "signals": [
+      {
+        "kind": "social",
+        "detail": "Working screenwriter; one produced feature in 2025. Public profile is professional only — no commentary on personal life or recovery. The alcohol-free preference is real and consistent, but it is a PREFERENCE — staff must NEVER acknowledge, congratulate, or reference recovery, sobriety, or wellness journey in any form. Treat it exactly like a dietary preference: silently accommodated, never mentioned.",
+        "sensitivity": "high"
+      },
+      {
+        "kind": "calendar",
+        "detail": "Writing retreat — no external meetings booked for the entire stay. Pattern matches prior decompression stays.",
+        "sensitivity": "medium"
+      },
+      {
+        "kind": "loyalty",
+        "detail": "Third Rosewood stay in 8 months; strong continuity with s_james. First Sand Hill visit. Booked the Pool Villa for the private pool.",
+        "sensitivity": "low"
+      }
+    ]
   }
 ]
