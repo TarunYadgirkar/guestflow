@@ -3,22 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --bg: #F9F7F4;
+  /* Rosewood Discovery Green + Charcoal + White (P3-adjusted) */
+  --discovery-green: #0B5E40;
+  --discovery-green-light: #155E3B;
+  --discovery-green-dark: #08432F;
+  --charcoal: #2C2C2C;
+  --charcoal-light: #3A3A3A;
+  --white: #FAFBF6; /* sRGB approximation of P3 rgb(250, 251, 246) */
+
+  /* Rosewood palette */
+  --bg: #FAFBF6; /* White from P3 */
   --surface: #FFFFFF;
-  --surface-alt: #F4F1ED;
-  --border: #E5DDD4;
-  --border-light: #EDE8E3;
-  --text-primary: #1C1917;
-  --text-secondary: #6B6258;
-  --text-muted: #9C8E85;
-  --accent: #9C7D5A;
-  --accent-light: #C4A882;
+  --surface-alt: #F5F5F3;
+  --border: #E8E8E5;
+  --border-light: #F0EFE8;
+  --text-primary: #2C2C2C; /* Charcoal */
+  --text-secondary: #5A5A5A;
+  --text-muted: #8C8C8C;
+  --accent: #0B5E40; /* Discovery Green */
+  --accent-light: #2E8B6F;
+  --accent-dark: #08432F;
   --danger: #9B1C1C;
   --danger-bg: #FEF2F2;
   --danger-border: #FCA5A5;
-  --success: #1A4731;
-  --success-bg: #F0FDF4;
-  --pivot: #7C2D12;
+  --success: #0B5E40; /* Use Discovery Green for success */
+  --success-bg: #E8F5F0;
+  --pivot: #1F4C4E;
   --pivot-bg: #FFF7ED;
   --pivot-border: #FED7AA;
 }

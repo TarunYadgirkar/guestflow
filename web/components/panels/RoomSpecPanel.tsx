@@ -49,10 +49,10 @@ export default function RoomSpecPanel({ roomSpec, className, style }: Props) {
         >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-base">🌙</span>
-            <span className="text-xs font-medium tracking-widest uppercase" style={{ color: 'var(--accent)' }}>
+            <span className="text-xs font-medium tracking-widest uppercase" style={{ color: 'var(--discovery-green)' }}>
               Sleep & Jet Lag Protocol
             </span>
-            <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--success-bg)', color: 'var(--success)' }}>
+            <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--success-bg)', color: 'var(--discovery-green)' }}>
               Standard
             </span>
           </div>

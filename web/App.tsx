@@ -121,15 +121,15 @@ export default function App() {
       <header className="border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
         <div className="max-w-7xl mx-auto px-8 py-6 flex items-end justify-between">
           <div>
-            <h1 className="font-serif text-4xl font-light tracking-wide" style={{ color: 'var(--text-primary)' }}>
-              GuestFlow
+            <h1 className="font-sans text-4xl font-light tracking-wide" style={{ color: 'var(--discovery-green)' }}>
+              Rosewood
             </h1>
             <p className="text-xs tracking-[0.2em] uppercase mt-1" style={{ color: 'var(--text-muted)' }}>
-              Agentic Arrival Orchestration
+              Operations Dashboard
             </p>
           </div>
           <div className="text-right">
-            <p className="font-serif text-lg font-light" style={{ color: 'var(--text-secondary)' }}>Rosewood Sand Hill</p>
+            <p className="font-sans text-lg font-light" style={{ color: 'var(--text-secondary)' }}>Rosewood Sand Hill</p>
             <p className="text-xs tracking-widest uppercase" style={{ color: 'var(--text-muted)' }}>Menlo Park, California</p>
           </div>
         </div>
@@ -235,8 +235,8 @@ export default function App() {
                 disabled={!canOrchestrate}
                 className="px-8 py-2.5 rounded-lg text-sm font-medium tracking-wide transition-all"
                 style={{
-                  backgroundColor: canOrchestrate ? 'var(--text-primary)' : 'var(--border)',
-                  color: canOrchestrate ? 'var(--bg)' : 'var(--text-muted)',
+                  backgroundColor: canOrchestrate ? 'var(--discovery-green)' : 'var(--border)',
+                  color: canOrchestrate ? '#FFFFFF' : 'var(--text-muted)',
                   cursor: canOrchestrate ? 'pointer' : 'not-allowed',
                   letterSpacing: '0.08em',
                 }}

@@ -94,7 +94,7 @@ export default function HostAssignmentPanel({ assignment, guestId, className, st
                 className="text-xs px-3 py-1 rounded-full font-medium"
                 style={{
                   backgroundColor: assignment.confidence > 0.85 ? 'var(--success-bg)' : 'var(--surface-alt)',
-                  color: assignment.confidence > 0.85 ? 'var(--success)' : 'var(--accent)',
+                  color: assignment.confidence > 0.85 ? 'var(--discovery-green)' : 'var(--discovery-green)',
                 }}
               >
                 {assignment.confidence > 0.85 ? '✓ Strong match' : '○ Good fit'}

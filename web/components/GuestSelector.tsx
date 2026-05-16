@@ -94,9 +94,9 @@ export default function GuestSelector({ selectedGuestId, onSelect, disabled }: G
               disabled={disabled}
               className="relative text-left p-4 rounded-xl border transition-all duration-200"
               style={{
-                borderColor: isSelected ? 'var(--text-primary)' : 'var(--border)',
-                backgroundColor: isSelected ? 'var(--text-primary)' : 'var(--surface)',
-                boxShadow: isSelected ? '0 4px 20px rgba(0,0,0,0.12)' : '0 1px 3px rgba(0,0,0,0.04)',
+                borderColor: isSelected ? 'var(--discovery-green)' : 'var(--border)',
+                backgroundColor: isSelected ? 'var(--discovery-green)' : 'var(--surface)',
+                boxShadow: isSelected ? '0 4px 20px rgba(11,94,64,0.15)' : '0 1px 3px rgba(0,0,0,0.04)',
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 opacity: disabled && !isSelected ? 0.6 : 1,
               }}
@@ -182,7 +182,7 @@ export default function GuestSelector({ selectedGuestId, onSelect, disabled }: G
 
               {isSelected && (
                 <div className="absolute top-3 right-3">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2.5}>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#FAFBF6" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
